@@ -43,7 +43,7 @@
         />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/btnDatePicker"
         android:layout_width="wrap_content"
         android:backgroundTint="@color/btnBgColor"
         android:textColor="@color/white"
