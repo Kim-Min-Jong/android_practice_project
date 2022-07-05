@@ -1,6 +1,6 @@
 # android_practice_project
 ## Making 7 Apps
-1. Age In Mitnutes
+1. Age In Mitnutes (07/05 done)
 
 2. Calculator
 
