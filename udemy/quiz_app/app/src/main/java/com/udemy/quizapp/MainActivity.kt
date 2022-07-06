@@ -20,6 +20,7 @@ class MainActivity : AppCompatActivity() {
             }else{
                 //intent 로 액티비티 이동
                 val intent = Intent(this, QuizQuestionActivity::class.java)
+                intent.putExtra(Constants.USER_NAME, etName.text.toString())
                 startActivity(intent)
                 finish()
             }
