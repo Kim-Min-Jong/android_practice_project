@@ -24,7 +24,14 @@ class MainActivity : AppCompatActivity() {
         lastDot = false
     }
     fun onOperator(view: View){
-        Toast.makeText(this,"op clicked",Toast.LENGTH_SHORT).show()
+        tvInput?.text?.let{
+            if(lastNumeric && !isOperatorAdded(it.toString())){
+                tvInput?.append((view as Button).text)
+                lastNumeric = false
+                lastDot = false
+            }
+
+        }
     }
     fun onEqual(view: View){
         Toast.makeText(this,"eq clicked",Toast.LENGTH_SHORT).show()
@@ -32,12 +39,19 @@ class MainActivity : AppCompatActivity() {
     fun onClear(view: View){
         tvInput?.text = ""
     }
-    fun onDecimalPoint(view: View){
-        if(lastNumeric && !lastDot){
+    fun onDecimalPoint(view: View) {
+        if (lastNumeric && !lastDot) {
             tvInput?.append(".")
             lastNumeric = false
             lastDot = true
         }
     }
+    private fun isOperatorAdded(value:String):Boolean{
+        return if(value.startsWith("-")){
+            false
+        } else{
+            value.contains("/")  || value.contains("*") || value.contains("+") || value.contains("-")
+        }
 
+    }
 }
