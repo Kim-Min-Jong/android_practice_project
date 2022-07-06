@@ -9,6 +9,8 @@ import android.widget.Toast
 
 class MainActivity : AppCompatActivity() {
     private var tvInput: TextView? = null
+    var lastNumeric = false
+    var lastDot = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,6 +20,8 @@ class MainActivity : AppCompatActivity() {
     fun onDigit(view: View){
         // 뷰를 버튼으로 취급해 text를 가져옴
         tvInput?.append((view as Button).text)
+        lastNumeric = true
+        lastDot = false
     }
     fun onOperator(view: View){
         Toast.makeText(this,"op clicked",Toast.LENGTH_SHORT).show()
@@ -29,7 +33,11 @@ class MainActivity : AppCompatActivity() {
         tvInput?.text = ""
     }
     fun onDecimalPoint(view: View){
-        Toast.makeText(this,"button clicked",Toast.LENGTH_SHORT).show()
+        if(lastNumeric && !lastDot){
+            tvInput?.append(".")
+            lastNumeric = false
+            lastDot = true
+        }
     }
 
 }
