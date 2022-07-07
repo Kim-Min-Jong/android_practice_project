@@ -125,6 +125,10 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context, attrs){
         mDrawPaint!!.strokeWidth = mBrushSize
     }
 
+    fun setColor(newColor:String){
+        color = Color.parseColor(newColor)
+        mDrawPaint!!.color = color
+    }
 
     // 이 클래스 안에서 쓰일 클래스 - Path android library
     // --> 자르기 그리기등을 지원하는 라이브러리 (2d,3d 가능)
