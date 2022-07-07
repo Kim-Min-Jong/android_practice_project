@@ -3,6 +3,7 @@ package com.udemy.drawing_app
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
+import android.util.TypedValue
 import android.view.MotionEvent
 import android.view.View
 
@@ -109,8 +110,21 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context, attrs){
         mDrawPaint!!.strokeCap = Paint.Cap.ROUND // 선 끝의 위치를 정함
         // 인스턴스 설정
         mCanvasPaint = Paint(Paint.DITHER_FLAG)
-        mBrushSize = 20.toFloat()
+//        mBrushSize = 20.toFloat()
     }
+
+    fun setSizeForBrush(newSize: Float){
+        //화면 크기를 고려해야하므로 아무런 newSize는 안됨
+        //-> applyDimension으로 제한
+        //applyDimension(a,b,c) a-> 밀도 픽셀, b-> 제한값, c-> newSize로 설점되지만
+        // 화면의 측정단위(displayMetrics)에 따라 조정됨 (화면에 비례..다른크기의 lcd)
+        mBrushSize = TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP,
+                newSize, resources.displayMetrics
+            )
+        //새 붓두께 조정
+        mDrawPaint!!.strokeWidth = mBrushSize
+    }
+
 
     // 이 클래스 안에서 쓰일 클래스 - Path android library
     // --> 자르기 그리기등을 지원하는 라이브러리 (2d,3d 가능)
