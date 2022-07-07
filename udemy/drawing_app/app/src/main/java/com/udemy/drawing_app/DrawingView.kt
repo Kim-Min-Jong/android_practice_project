@@ -22,6 +22,9 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context, attrs){
     // 캔버스
     private var canvas: Canvas? = null
 
+    //그린거 저장하는 변수
+    private val mPaths = ArrayList<CustomPath>()
+
     init{
         setUpDrawing()
     }
@@ -41,6 +44,14 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context, attrs){
         super.onDraw(canvas)
         // 캔버스에 비트맵그리기 왼쪽위 0 부터
          canvas.drawBitmap(mCanvasBitmap!!, 0f, 0f, mCanvasPaint)
+
+        //path를 전부 돌면서 그린거 유지하기
+        for(path in mPaths){
+            mDrawPaint!!.strokeWidth = path!!.brushThickness // 붓두께
+            mDrawPaint!!.color = path.color
+            canvas.drawPath(path, mDrawPaint!!)
+        }
+
         // Paint 그리기(설정)
         if(!mDrawPath!!.isEmpty) {
             mDrawPaint!!.strokeWidth = mDrawPath!!.brushThickness // 붓두께
@@ -77,6 +88,7 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context, attrs){
                 }
             }
             MotionEvent.ACTION_UP -> {
+                mPaths.add(mDrawPath!!)
                 mDrawPath = CustomPath(color, mBrushSize)
             }
             else -> return false
