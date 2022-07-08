@@ -1,17 +1,55 @@
 package com.udemy.drawing_app
 
+import android.Manifest
+import android.Manifest.permission.READ_EXTERNAL_STORAGE
+import android.app.Activity
 import android.app.Dialog
 import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.View
 import android.widget.*
+import androidx.activity.result.ActivityResult
+import androidx.activity.result.ActivityResultLauncher
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
 
 class MainActivity : AppCompatActivity() {
     private var drawingView: DrawingView? = null
     private var mImageButtonCurrentPaint: ImageButton? = null
+
+    private val openGalleryLauncher: ActivityResultLauncher<Intent> =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
+            result ->
+            if(result.resultCode == Activity.RESULT_OK &&result.data != null){
+                val imageBackground:ImageView = findViewById(R.id.iv_background)
+                imageBackground.setImageURI(result.data?.data)
+            }
+        }
+
+    var requestPermission: ActivityResultLauncher<Array<String>> =
+        registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()){
+            permission ->
+                permission.entries.forEach{
+                    val permissionName = it.key
+                    val isGranted = it.value
+                    if(isGranted){
+                        Toast.makeText(applicationContext, "Permission granted now  you can read the storage files", Toast.LENGTH_LONG).show()
+                        // 권한 확인후 갤러리 열기
+                        val pickIntent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        openGalleryLauncher.launch(pickIntent)
+                    }else {
+                        if(permissionName == Manifest.permission.READ_EXTERNAL_STORAGE){
+                            Toast.makeText(applicationContext, "oops! denied storage permission ", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                }
+        }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,6 +70,11 @@ class MainActivity : AppCompatActivity() {
         brush.setOnClickListener {
             showBrushSizeChooserDialog()
 
+        }
+
+        val gallery: ImageButton = findViewById(R.id.ib_gallery)
+        gallery.setOnClickListener {
+            requestStoragePermission()
         }
     }
 
@@ -79,4 +122,36 @@ class MainActivity : AppCompatActivity() {
 
        }
     }
+    private fun requestStoragePermission(){
+        if(ActivityCompat.shouldShowRequestPermissionRationale(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+        )){
+            showRationaleDialog(
+                "Kids Drawing App",
+                "Kids Drawing App needs to Access your external storage"
+            )
+        } else{
+            requestPermission.launch(
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+            )
+        }
+
+    }
+    private fun showRationaleDialog(
+        title: String,
+        message: String,
+    ) {
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this)
+        builder.setTitle(title)
+            .setMessage(message)
+            .setPositiveButton("Cancel") { dialog, _ ->
+                requestPermission.launch(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                )
+                dialog.dismiss()
+            }
+        builder.create().show()
+    }
+
 }
