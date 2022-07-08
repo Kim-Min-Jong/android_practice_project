@@ -6,6 +6,10 @@ import android.app.Activity
 import android.app.Dialog
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
+import android.graphics.Canvas
+import android.graphics.Color
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -18,6 +22,13 @@ import androidx.appcompat.app.AlertDialog
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.view.get
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileOutputStream
 
 class MainActivity : AppCompatActivity() {
     private var drawingView: DrawingView? = null
@@ -86,7 +97,16 @@ class MainActivity : AppCompatActivity() {
         redo.setOnClickListener {
             drawingView?.onClickRedo()
         }
-
+        val save :ImageButton = findViewById(R.id.ib_save)
+        save.setOnClickListener {
+            // 비동기 실행
+            if(isReadStorageAllowed()){
+                lifecycleScope.launch {
+                    val flDrawingView:FrameLayout = findViewById(R.id.fl_drawing_container)
+                    saveBitmapFile(getBitmapFromView(flDrawingView))
+                }
+            }
+        }
     }
 
     private fun showBrushSizeChooserDialog() {
@@ -133,6 +153,14 @@ class MainActivity : AppCompatActivity() {
 
        }
     }
+
+    // 읽기 권한 확인
+    private fun isReadStorageAllowed(): Boolean{
+        val result =  ContextCompat.checkSelfPermission(this,
+            Manifest.permission.READ_EXTERNAL_STORAGE)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
+
     private fun requestStoragePermission(){
         if(ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -144,11 +172,74 @@ class MainActivity : AppCompatActivity() {
             )
         } else{
             requestPermission.launch(
-                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE)
+                arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE,
+                    Manifest.permission.WRITE_EXTERNAL_STORAGE)
             )
         }
-
     }
+
+    private fun getBitmapFromView(view: View): Bitmap {
+        // 저장할 이미지의 너비 높이, 투명도 설정
+        val returnedBitmap = Bitmap.createBitmap(
+            view.width, view.height, Bitmap.Config.ARGB_8888)
+        // 캔버스에 비트뱅을 넣음
+        val canvas = Canvas(returnedBitmap)
+        // 배경이 있을 수 있으니 view의 배경을 일단 가져옴
+        val bgDrawable = view.background
+        // 있으면
+        if(bgDrawable != null){
+            //캔버스 + 배경
+            bgDrawable.draw(canvas)
+        }else{
+            // 없으면 흰배경
+            canvas.drawColor(Color.WHITE)
+        }
+        // 캔버스를 다시 뷰로 적용
+        view.draw(canvas)
+        // 그 뷰룰 가진 비트맵을 반환환
+        return returnedBitmap
+    }
+    private suspend fun saveBitmapFile(mBitmap: Bitmap?):String{
+        // 결과(이미지) 담을 변수
+        var result = ""
+        //async task
+        withContext(Dispatchers.IO){
+            if(mBitmap != null){
+                // 오류가 날 수 있기때문에 출력스트림 이용
+                try{
+                    // 바이트 배열 출력 스트림으로 이미지 출력
+                    val bytes = ByteArrayOutputStream()
+                    // 비트맵 압축 (압축형식 ,90% 수준, 출력 스트림)
+                    mBitmap.compress(Bitmap.CompressFormat.PNG, 90, bytes)
+                    // 저장할 파일  (파일을 저장할 경로 및 파일 이름 설정
+                    val f = File(externalCacheDir?.absoluteFile.toString()
+                            + File.separator + "DrawingApp_"+ System.currentTimeMillis() / 1000 + ".png")
+
+                    // 출력 스트림 -- 실제 쓰기 과정
+                    val fo = FileOutputStream(f)
+                    fo.write(bytes.toByteArray())
+                    fo.close()
+
+                    result = f.absolutePath
+
+                    // 위는 백그라운드실행
+                    // 이제는 ui 쓰레드에서 실행행
+                   runOnUiThread {
+                        if(result.isNotEmpty()){
+                            Toast.makeText(applicationContext,"File saved successfully: $result",Toast.LENGTH_LONG).show()
+                        }else{
+                            Toast.makeText(applicationContext,"File saved Failed..", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                } catch(e:Exception) {  // 실패하면
+                    result = ""
+                    e.printStackTrace()
+                }
+            }
+        }
+        return result
+    }
+
     private fun showRationaleDialog(
         title: String,
         message: String,
