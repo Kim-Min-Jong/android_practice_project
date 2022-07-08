@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:scaleType="centerCrop"
-            android:src="@drawable/whitespace"/>
+            tools:src="@drawable/whitespace"/>
         <com.udemy.drawing_app.DrawingView
             android:id="@+id/drawing_view"
             android:layout_width="match_parent"

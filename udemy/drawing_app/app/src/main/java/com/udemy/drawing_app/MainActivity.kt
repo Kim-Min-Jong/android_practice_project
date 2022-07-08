@@ -10,6 +10,7 @@ import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
+import android.media.MediaScannerConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -229,6 +230,7 @@ class MainActivity : AppCompatActivity() {
                        cancelProgressDialog()
                         if(result.isNotEmpty()){
                             Toast.makeText(applicationContext,"File saved successfully: $result",Toast.LENGTH_LONG).show()
+                            showShareDialog(result)
                         }else{
                             Toast.makeText(applicationContext,"File saved Failed..", Toast.LENGTH_LONG).show()
                         }
@@ -258,9 +260,20 @@ class MainActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    private fun showShareDialog(result:String){
+        val builder: AlertDialog.Builder = AlertDialog.Builder(this@MainActivity)
+        builder.setTitle("share the image?")
+            .setMessage("Are you share the Image??? if you want CLICK YES!!")
+            .setPositiveButton("YES") { dialog, _ ->
+                shareImage(result)
+                dialog.dismiss()
+            }.setNegativeButton("NO"){_,_->}
+        builder.create().show()
+    }
+
     // progress dialog
     private fun showCustomProgressDialog() {
-        customProgressDialog = Dialog(applicationContext)
+        customProgressDialog = Dialog(this@MainActivity)
 
         /*Set the screen content from a layout resource.
         The resource will be inflated, adding all top-level views to the screen.*/
@@ -273,6 +286,25 @@ class MainActivity : AppCompatActivity() {
         if(customProgressDialog != null){
             customProgressDialog?.dismiss()
             customProgressDialog = null
+        }
+    }
+
+    // 이미지 공유기능
+    private fun shareImage(result: String){
+        // 미디어 파일을 미디어스캐너 서비스에 보냄
+        // 미디어스캐너 서비스는 메타데이터를 읽고 media content provider에 파일을 추가함
+        // 그리고 연결 클라이언트를 열어 파일의 uri를 반환
+        // (context, 내보낼 결과, 통과시키지 않을 타입
+        MediaScannerConnection.scanFile(this@MainActivity, arrayOf(result),null){
+            // path , uri
+            path, uri ->
+            val shareIntent = Intent()
+            // intent의 보내는 액션  -- uri를 보냄
+            shareIntent.action = Intent.ACTION_SEND
+            shareIntent.putExtra(Intent.EXTRA_STREAM, uri)
+            shareIntent.type = "image/png"
+            // 선택화면 시작
+            startActivity(Intent.createChooser(shareIntent,"Share"))
         }
     }
 }
