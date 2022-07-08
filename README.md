@@ -4,9 +4,9 @@
 
 2. Calculator (2022/07/06 done)
 
-3. Quiz App
+3. Quiz App (2022/07/06 done)
 
-4. Drawing App
+4. Drawing App (2022/07/08 done..maybe to be updated)
 
 5. 7Minutes exercise App
 
