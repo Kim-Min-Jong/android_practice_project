@@ -23,6 +23,7 @@ class MainActivity : AppCompatActivity() {
     private var drawingView: DrawingView? = null
     private var mImageButtonCurrentPaint: ImageButton? = null
 
+
     private val openGalleryLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
             result ->
@@ -76,6 +77,16 @@ class MainActivity : AppCompatActivity() {
         gallery.setOnClickListener {
             requestStoragePermission()
         }
+
+        val undo: ImageButton = findViewById(R.id.ib_undo)
+        undo.setOnClickListener {
+            drawingView?.onClickUndo()
+        }
+        val redo: ImageButton = findViewById(R.id.ib_redo)
+        redo.setOnClickListener {
+            drawingView?.onClickRedo()
+        }
+
     }
 
     private fun showBrushSizeChooserDialog() {

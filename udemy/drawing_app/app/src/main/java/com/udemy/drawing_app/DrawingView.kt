@@ -26,10 +26,29 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context, attrs){
     //그린거 저장하는 변수
     private val mPaths = ArrayList<CustomPath>()
 
+    //지우기 위해 저장하는 변수
+    private val mUndoPaths = ArrayList<CustomPath>()
+
     init{
         setUpDrawing()
     }
 
+    fun onClickUndo(){
+        if(mPaths.size > 0){
+            mUndoPaths.add(mPaths.removeAt(mPaths.size - 1))
+            //무효화하고
+            invalidate()
+            //추후에 다시띄운다
+        }
+    }
+    fun onClickRedo(){
+        if(mUndoPaths.size > 0){
+            mPaths.add(mUndoPaths.removeAt(mUndoPaths.size - 1))
+            //무효화하고
+            invalidate()
+            //추후에 다시띄운다
+        }
+    }
     // 화면 크기가 바뀔 때마다 불림 (캔버스 초기화)
     override fun onSizeChanged(w: Int, h: Int, oldw: Int, oldh: Int) {
         super.onSizeChanged(w, h, oldw, oldh)
@@ -40,7 +59,7 @@ class DrawingView(context: Context, attrs:AttributeSet) : View(context, attrs){
 
     }
 
-    // 오류가 나면 Canvas를 널러블로 다시
+    // 오류가 나면 Canvas를 널러블로 다시   실제 그리는 메소드
     override fun onDraw(canvas: Canvas) {
         super.onDraw(canvas)
         // 캔버스에 비트맵그리기 왼쪽위 0 부터
