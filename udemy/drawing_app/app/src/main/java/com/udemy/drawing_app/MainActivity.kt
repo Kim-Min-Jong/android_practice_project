@@ -33,7 +33,7 @@ import java.io.FileOutputStream
 class MainActivity : AppCompatActivity() {
     private var drawingView: DrawingView? = null
     private var mImageButtonCurrentPaint: ImageButton? = null
-
+    var customProgressDialog: Dialog? = null
 
     private val openGalleryLauncher: ActivityResultLauncher<Intent> =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()){
@@ -101,6 +101,7 @@ class MainActivity : AppCompatActivity() {
         save.setOnClickListener {
             // 비동기 실행
             if(isReadStorageAllowed()){
+                showCustomProgressDialog()
                 lifecycleScope.launch {
                     val flDrawingView:FrameLayout = findViewById(R.id.fl_drawing_container)
                     saveBitmapFile(getBitmapFromView(flDrawingView))
@@ -225,6 +226,7 @@ class MainActivity : AppCompatActivity() {
                     // 위는 백그라운드실행
                     // 이제는 ui 쓰레드에서 실행행
                    runOnUiThread {
+                       cancelProgressDialog()
                         if(result.isNotEmpty()){
                             Toast.makeText(applicationContext,"File saved successfully: $result",Toast.LENGTH_LONG).show()
                         }else{
@@ -256,4 +258,21 @@ class MainActivity : AppCompatActivity() {
         builder.create().show()
     }
 
+    // progress dialog
+    private fun showCustomProgressDialog() {
+        customProgressDialog = Dialog(applicationContext)
+
+        /*Set the screen content from a layout resource.
+        The resource will be inflated, adding all top-level views to the screen.*/
+        customProgressDialog?.setContentView(R.layout.dialog_custom_progress)
+
+        //Start the dialog and display it on screen.
+        customProgressDialog?.show()
+    }
+    private fun cancelProgressDialog() {
+        if(customProgressDialog != null){
+            customProgressDialog?.dismiss()
+            customProgressDialog = null
+        }
+    }
 }
