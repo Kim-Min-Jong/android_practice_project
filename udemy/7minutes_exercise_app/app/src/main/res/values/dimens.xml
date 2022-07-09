@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- 앱 전체에 적용할 세팅을 설정할 수 있음 -->
     <dimen name="main_screen_main_layout_padding">5dp</dimen>
     <dimen name="default_button_text_size">22sp</dimen>
 </resources>
