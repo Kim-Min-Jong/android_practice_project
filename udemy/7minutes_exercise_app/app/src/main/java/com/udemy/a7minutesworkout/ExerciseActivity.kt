@@ -1,5 +1,7 @@
 package com.udemy.a7minutesworkout
 
+import android.media.MediaPlayer
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
@@ -8,6 +10,7 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import com.udemy.a7minutesworkout.databinding.ActivityExerciseBinding
+import java.lang.Exception
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -28,6 +31,10 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     //tts
     private var tts: TextToSpeech? = null
+
+    // rest view 중간 음성
+    private var player: MediaPlayer? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExerciseBinding.inflate(layoutInflater)
@@ -54,6 +61,18 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
     // 타이머 충돌 방지를 위해 따로 설정(타이머 있을 때, 없을 떄)
     private fun setUpRestView(){
+        // 알림 음성 적용
+        try {
+            val soundURI = Uri.parse(
+             "android.resource://com.udemy.a7minutesworkout/"
+            + R.raw.press_start)
+            player = MediaPlayer.create(applicationContext, soundURI)
+            player?.isLooping = false
+            player?.start()
+        } catch(e:Exception) {
+            e.printStackTrace()
+        }
+
         // 대기 화면은 보이게하고
         binding?.flRestView?.visibility = View.VISIBLE
         binding?.tvTitle?.visibility = View.VISIBLE
@@ -159,7 +178,10 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             tts?.stop()
             tts?.shutdown()
         }
+        if(player != null){
+            player!!.stop()
         binding = null
+        }
     }
 
     override fun onInit(status: Int) {
@@ -177,5 +199,4 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         // queue-flush -- 이전 입력 문장 삭제  add -- 이전문장에 이어서 추가
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH,null,"")
     }
-
 }
