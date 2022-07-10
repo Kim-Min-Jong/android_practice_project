@@ -49,6 +49,8 @@ class ExerciseActivity : AppCompatActivity() {
         // 대기 화면은 보이게하고
         binding?.flRestView?.visibility = View.VISIBLE
         binding?.tvTitle?.visibility = View.VISIBLE
+        binding?.upcoming?.visibility = View.VISIBLE
+        binding?.kindOfExercise?.visibility = View.VISIBLE
 
         // 운동화면은 안보이게 하고
         binding?.tvExerciseName?.visibility = View.INVISIBLE
@@ -58,6 +60,7 @@ class ExerciseActivity : AppCompatActivity() {
             restTimer?.cancel()
             restProgress = 0
         }
+        binding?.kindOfExercise?.text = exerciseList!![currentExercisePosition+1].name
         setRestProgressBar()
     }
 
@@ -65,6 +68,8 @@ class ExerciseActivity : AppCompatActivity() {
         // 대기 화면은 가리고
         binding?.flRestView?.visibility = View.INVISIBLE
         binding?.tvTitle?.visibility = View.INVISIBLE
+        binding?.upcoming?.visibility = View.INVISIBLE
+        binding?.kindOfExercise?.visibility = View.INVISIBLE
 
         // 운동화면은 보이게 하고
         binding?.tvExerciseName?.visibility = View.VISIBLE
@@ -90,7 +95,7 @@ class ExerciseActivity : AppCompatActivity() {
     private fun setRestProgressBar(){
         binding?.progressBar?.progress = restProgress
 
-        restTimer = object: CountDownTimer(10000, 1000){
+        restTimer = object: CountDownTimer(3000, 1000){
             override fun onTick(p0: Long) {
                 restProgress++
                 binding?.progressBar?.progress =  10 - restProgress
@@ -109,7 +114,7 @@ class ExerciseActivity : AppCompatActivity() {
     private fun setExerciseProgressBar(){
         binding?.progressBar?.progress = exerciseProgress
 
-        exerciseTimer = object: CountDownTimer(30000, 1000){
+        exerciseTimer = object: CountDownTimer(3000, 1000){
             override fun onTick(p0: Long) {
                 exerciseProgress++
                 binding?.progressBarExercise?.progress =  30 - exerciseProgress

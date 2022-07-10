@@ -69,6 +69,31 @@
 
         </LinearLayout>
     </FrameLayout>
+    <TextView
+        android:id="@+id/upcoming"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:text="UPCOMING EXERCISE :"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/flRestView"/>
+    <TextView
+        android:id="@+id/kindOfExercise"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center"
+        android:textSize="20dp"
+        android:text="UPCOMING EXERCISE"
+        android:textColor="@color/black"
+        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/upcoming"/>
+
     <ImageView
         android:id="@+id/ivImage"
         android:layout_width="match_parent"
@@ -77,8 +102,10 @@
         android:src="@drawable/ic_jumping_jacks"
         android:visibility="invisible"
         app:layout_constraintBottom_toTopOf="@id/tvExerciseName"
-        app:layout_constraintTop_toBottomOf="@id/toolbarExercise"/>
-        <TextView
+        app:layout_constraintTop_toBottomOf="@id/toolbarExercise"
+        tools:layout_editor_absoluteX="0dp" />
+
+    <TextView
             android:id="@+id/tvExerciseName"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
