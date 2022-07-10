@@ -3,14 +3,20 @@ package com.udemy.a7minutesworkout
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.CountDownTimer
+import android.view.View
 import android.widget.Toast
 import com.udemy.a7minutesworkout.databinding.ActivityExerciseBinding
 
 class ExerciseActivity : AppCompatActivity() {
     private var binding: ActivityExerciseBinding? = null
 
+    // 대기용
     private var restTimer: CountDownTimer? = null
     private var restProgress = 0
+
+    // 운동용용
+    private var exerciseTimer: CountDownTimer? = null
+    private var exerciseProgress = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +34,7 @@ class ExerciseActivity : AppCompatActivity() {
         binding?.toolbarExercise?.setNavigationOnClickListener {
             onBackPressed()
         }
+
         setUpRestView()
     }
 
@@ -39,7 +46,20 @@ class ExerciseActivity : AppCompatActivity() {
         }
         setRestProgressBar()
     }
-    // 프로그레스바 진행 메소드
+
+    private fun setUpExerciseView(){
+        binding?.flProgressBar?.visibility = View.INVISIBLE
+        binding?.tvTitle?.text = "Exercise Name"
+        binding?.flExerciseView?.visibility = View.VISIBLE
+
+        if(exerciseTimer != null){
+            exerciseTimer?.cancel()
+            exerciseProgress = 0
+        }
+        setExerciseProgressBar()
+    }
+
+    // 프로그레스바 진행 메소드 (대기용)
     private fun setRestProgressBar(){
         binding?.progressBar?.progress = restProgress
 
@@ -51,11 +71,30 @@ class ExerciseActivity : AppCompatActivity() {
             }
 
             override fun onFinish() {
-                Toast.makeText(this@ExerciseActivity,"start next exercise",Toast.LENGTH_LONG).show()
+                setUpExerciseView()
             }
 
         }.start()
     }
+
+    // 프로그레스바 진행 메소드 (운동용)
+    private fun setExerciseProgressBar(){
+        binding?.progressBar?.progress = exerciseProgress
+
+        exerciseTimer = object: CountDownTimer(30000, 1000){
+            override fun onTick(p0: Long) {
+                exerciseProgress++
+                binding?.progressBarExercise?.progress =  30 - exerciseProgress
+                binding?.tvTimerExercise?.text = (30 -exerciseProgress).toString()
+            }
+
+            override fun onFinish() {
+                Toast.makeText(this@ExerciseActivity,"30초 끝 휴식시간입니다.",Toast.LENGTH_LONG).show()
+            }
+
+        }.start()
+    }
+
 
     override fun onDestroy() {
         super.onDestroy()
@@ -63,6 +102,13 @@ class ExerciseActivity : AppCompatActivity() {
             restTimer?.cancel()
             restProgress = 0
         }
+
+        if(exerciseTimer != null){
+            exerciseTimer?.cancel()
+            exerciseProgress = 0
+        }
+
+
         binding = null
     }
 }
