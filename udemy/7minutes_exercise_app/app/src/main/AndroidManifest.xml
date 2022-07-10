@@ -2,6 +2,13 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.udemy.a7minutesworkout">
 
+    <!-- android 11 및 에뮬레이터 연동을 원활히 하기 위해 추가-->
+    <queries>
+        <intent>
+            <action android:name="action.intent.action.TTS_SERVICE"/>
+        </intent>
+    </queries>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
