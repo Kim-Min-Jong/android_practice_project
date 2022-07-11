@@ -9,6 +9,7 @@ import android.speech.tts.TextToSpeech
 import android.util.Log
 import android.view.View
 import android.widget.Toast
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.udemy.a7minutesworkout.databinding.ActivityExerciseBinding
 import java.lang.Exception
 import java.util.*
@@ -35,6 +36,9 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
     // rest view 중간 음성
     private var player: MediaPlayer? = null
 
+    //recycler adapter
+    private var exerciseAdapter: ExerciseStatusAdapter? = null
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityExerciseBinding.inflate(layoutInflater)
@@ -47,16 +51,24 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
             supportActionBar?.setDisplayHomeAsUpEnabled(true)
         }
 
-        exerciseList = Constants.defaultExerciseList()
-
-        tts = TextToSpeech(this, this)
-
         // 액션바 설정
         binding?.toolbarExercise?.setNavigationOnClickListener {
             onBackPressed()
         }
+        exerciseList = Constants.defaultExerciseList()
+
+        tts = TextToSpeech(this, this)
 
         setUpRestView()
+        setUpExerciseStatusRecyclerView()
+    }
+
+    // recyler view function
+    private fun setUpExerciseStatusRecyclerView(){
+        binding?.rvExerciseStatus?.layoutManager =
+            LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL,false)
+        exerciseAdapter = ExerciseStatusAdapter(exerciseList!!)
+        binding?.rvExerciseStatus?.adapter = exerciseAdapter
     }
 
     // 타이머 충돌 방지를 위해 따로 설정(타이머 있을 때, 없을 떄)
@@ -196,7 +208,7 @@ class ExerciseActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         }
     }
     private fun speakOut(text:String){
-        // queue-flush -- 이전 입력 문장 삭제  add -- 이전문장에 이어서 추가
+        // queue-flush -- 이전  입력 문장 삭제  add -- 이전문장에 이어서 추가
         tts?.speak(text, TextToSpeech.QUEUE_FLUSH,null,"")
     }
 }
