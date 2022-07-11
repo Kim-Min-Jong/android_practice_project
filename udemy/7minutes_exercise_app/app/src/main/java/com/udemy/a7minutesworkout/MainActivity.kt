@@ -18,6 +18,10 @@ class MainActivity : AppCompatActivity() {
             val intent = Intent(this, ExerciseActivity::class.java)
             startActivity(intent)
         }
+        binding?.flBMI?.setOnClickListener{
+            val intent = Intent(this, BMIActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     // view binding 사용 시 오버라이드 하기
