@@ -8,7 +8,7 @@
 
 4. Drawing App (2022/07/08 done..maybe to be updated)
 
-5. 7Minutes exercise App
+5. 7Minutes exercise App (2022/07/13 done..maybe to be updated)
 
 6. Happy Places app
 
