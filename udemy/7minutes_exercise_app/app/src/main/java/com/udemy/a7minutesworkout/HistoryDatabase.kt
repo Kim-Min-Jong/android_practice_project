@@ -4,16 +4,15 @@ import android.content.Context
 import androidx.room.*
 import kotlinx.coroutines.InternalCoroutinesApi
 
-@Database(entities=[HistoryEntity::class], version=1)
+@Database(entities=[HistoryEntity::class], version=1, exportSchema = false)
 abstract class HistoryDatabase:RoomDatabase() {
     abstract fun historyDao():HistoryDao
     companion object {
         @Volatile
         private var INSTANCE:HistoryDatabase? = null
 
-        @OptIn(InternalCoroutinesApi::class)
         fun getInstance(context: Context):HistoryDatabase{
-            kotlinx.coroutines.internal.synchronized(this) {
+            synchronized(this) {
                 var instance = INSTANCE
                 if (instance == null) {
                     instance = Room.databaseBuilder(
