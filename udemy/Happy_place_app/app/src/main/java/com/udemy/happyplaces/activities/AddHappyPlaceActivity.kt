@@ -1,4 +1,4 @@
-package com.udemy.happyplaces
+package com.udemy.happyplaces.activities
 
 import android.Manifest
 import android.app.Activity
@@ -23,6 +23,7 @@ import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
+import com.udemy.happyplaces.R
 import com.udemy.happyplaces.databinding.ActivityAddHappyPlaceBinding
 import java.io.File
 import java.io.FileOutputStream
@@ -34,13 +35,19 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     private var binding: ActivityAddHappyPlaceBinding? = null
     private var cal = Calendar.getInstance()
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
+    // 이미지 위치 uri
+    private var saveImageToInternalStorage: Uri? = null
+
+    private var mLatitude: Double = 0.0
+    private var mLongitude: Double = 0.0
+
     // deprecated 된 startActivityForResult 대체 수단
     val getGalleryImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == Activity.RESULT_OK) {
-                val uri = result.data?.data // 선택한 이미지의 주소(상대경로)
+                saveImageToInternalStorage = result.data?.data // 선택한 이미지의 주소(상대경로)
 
-                binding?.ivPlaceImage?.setImageURI(uri!!)
+                binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
             }
         }
     val takeCameraImageLauncher =
@@ -52,10 +59,11 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 val rotatedBitmap = Bitmap.createBitmap(bitmap,0,0,
                         bitmap.width, bitmap.height, matrix, true)
                 bitmap.recycle()
-                val selectedImageBitmap = saveImageToInternalStorage(rotatedBitmap)
+                saveImageToInternalStorage = saveImageToInternalStorage(rotatedBitmap)
                 binding?.ivPlaceImage?.setImageBitmap(rotatedBitmap)
             }
         }
+
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -83,6 +91,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
         binding?.etDate?.setOnClickListener(this)
         binding?.ivPlaceImage?.setOnClickListener(this)
+        binding?.btnSave?.setOnClickListener(this)
     }
 
     // a모든 클릭 리스너
@@ -106,6 +115,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         }
                 }
                 pictureDialog.create().show()
+            }
+            R.id.btn_save -> {
+
             }
         }
     }
