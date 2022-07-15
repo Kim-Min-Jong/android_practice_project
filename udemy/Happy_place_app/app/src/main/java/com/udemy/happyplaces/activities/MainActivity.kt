@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
         // 읽어온 것을 리스트로 저장
         val getHappyPlaceList: ArrayList<HappyPlaceModel> =
             dbHandler.getHappyPlacesList()
-        binding?.rvHappyPlacesList?.adapter?.notifyDataSetChanged()
+
         if(getHappyPlaceList.size > 0){
             binding?.rvHappyPlacesList?.visibility = View.VISIBLE
             binding?.tvNoRecordsAvailable?.visibility = View.GONE
@@ -51,6 +51,15 @@ class MainActivity : AppCompatActivity() {
     private fun setupHappyPlaceRecyclerView(happyPlaceList: ArrayList<HappyPlaceModel>){
         binding?.rvHappyPlacesList?.layoutManager = LinearLayoutManager(this)
         binding?.rvHappyPlacesList?.setHasFixedSize(true)
-        binding?.rvHappyPlacesList?.adapter = HappyPlacesAdapter(this, happyPlaceList)
+        val adapter = HappyPlacesAdapter(this, happyPlaceList)
+        binding?.rvHappyPlacesList?.adapter = adapter
+        adapter.setOnClickListener(object:HappyPlacesAdapter.OnClickListener{
+            override fun onClick(position: Int, model: HappyPlaceModel) {
+                val intent = Intent(this@MainActivity, HappyPlaceDetailActivity::class.java)
+                startActivity(intent)
+
+            }
+
+        })
     }
 }

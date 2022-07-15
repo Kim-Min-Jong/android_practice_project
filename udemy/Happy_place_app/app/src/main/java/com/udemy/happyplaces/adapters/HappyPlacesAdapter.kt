@@ -52,17 +52,14 @@ open class HappyPlacesAdapter(
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val model = list[position]
 
-            holder.ivPlaceImage.setImageURI(Uri.parse(model.image))
-            holder.tvTitle.text = model.title
-            holder.tvDescription.text = model.description
-
-            holder.itemView.setOnClickListener {
-
-                if (onClickListener != null) {
-                    onClickListener!!.onClick(position, model)
-                }
+        holder.ivPlaceImage.setImageURI(Uri.parse(model.image))
+        holder.tvTitle.text = model.title
+        holder.tvDescription.text = model.description
+        holder.itemView.setOnClickListener {
+            if (onClickListener != null) {
+                onClickListener!!.onClick(position, model)
             }
-
+        }
     }
 
     /**
