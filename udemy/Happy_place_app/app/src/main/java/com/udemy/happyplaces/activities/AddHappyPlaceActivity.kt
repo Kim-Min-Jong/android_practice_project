@@ -16,6 +16,7 @@ import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings
 import android.view.View
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import com.karumi.dexter.Dexter
@@ -24,7 +25,9 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.udemy.happyplaces.R
+import com.udemy.happyplaces.database.DatabaseHandler
 import com.udemy.happyplaces.databinding.ActivityAddHappyPlaceBinding
+import com.udemy.happyplaces.models.HappyPlaceModel
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
@@ -82,13 +85,13 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         }
 
         dateSetListener = DatePickerDialog.OnDateSetListener {
-                view, year, month, dayOfMonth ->
+                _ , year, month, dayOfMonth ->
                     cal.set(Calendar.YEAR, year)
                     cal.set(Calendar.MONTH, month)
                     cal.set(Calendar.DAY_OF_MONTH, dayOfMonth)
                     updateDateInView()
-
         }
+        updateDateInView()
         binding?.etDate?.setOnClickListener(this)
         binding?.ivPlaceImage?.setOnClickListener(this)
         binding?.btnSave?.setOnClickListener(this)
@@ -117,7 +120,37 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                 pictureDialog.create().show()
             }
             R.id.btn_save -> {
-
+                when{
+                    binding?.etTitle?.text.isNullOrEmpty() ->{
+                        Toast.makeText(this,"please enter title", Toast.LENGTH_LONG).show()
+                    }
+                    binding?.etDescription?.text.isNullOrEmpty() ->{
+                        Toast.makeText(this,"please enter a description", Toast.LENGTH_LONG).show()
+                    }
+                    binding?.etLocation?.text.isNullOrEmpty() ->{
+                        Toast.makeText(this,"please enter a location", Toast.LENGTH_LONG).show()
+                    }
+                    saveImageToInternalStorage == null ->{
+                        Toast.makeText(this,"please select an image", Toast.LENGTH_LONG).show()
+                    } else ->{
+                        val happyPlaceModel = HappyPlaceModel(
+                            0,
+                                binding?.etTitle?.text.toString(),
+                                saveImageToInternalStorage.toString(),
+                                binding?.etDescription?.text.toString(),
+                                binding?.etDate?.text.toString(),
+                                binding?.etLocation?.text.toString(),
+                                mLatitude,
+                                mLongitude
+                            )
+                        val dbHandler = DatabaseHandler(this)
+                        val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                        if(addHappyPlace > 0){
+                            Toast.makeText(this,"insert succesfully",Toast.LENGTH_SHORT).show()
+                            finish()
+                        }
+                    }
+                }
             }
         }
     }
