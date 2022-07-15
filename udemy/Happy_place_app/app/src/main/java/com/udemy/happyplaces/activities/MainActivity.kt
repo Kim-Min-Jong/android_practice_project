@@ -3,6 +3,9 @@ package com.udemy.happyplaces.activities
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.View
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.happyplaces.adapters.HappyPlacesAdapter
 import com.udemy.happyplaces.database.DatabaseHandler
 import com.udemy.happyplaces.databinding.ActivityMainBinding
 import com.udemy.happyplaces.models.HappyPlaceModel
@@ -14,9 +17,16 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
+
+        getHappyPlacesListFromLocalDB()
+
         binding?.fabAddaHappyPlace?.setOnClickListener{
             val intent = Intent(this, AddHappyPlaceActivity::class.java)
             startActivity(intent)
+        }
+        binding?.swipeLl?.setOnRefreshListener {
+            getHappyPlacesListFromLocalDB()
+            binding?.swipeLl?.isRefreshing = false
         }
     }
 
@@ -26,7 +36,21 @@ class MainActivity : AppCompatActivity() {
         // 읽어온 것을 리스트로 저장
         val getHappyPlaceList: ArrayList<HappyPlaceModel> =
             dbHandler.getHappyPlacesList()
+        binding?.rvHappyPlacesList?.adapter?.notifyDataSetChanged()
+        if(getHappyPlaceList.size > 0){
+            binding?.rvHappyPlacesList?.visibility = View.VISIBLE
+            binding?.tvNoRecordsAvailable?.visibility = View.GONE
+            setupHappyPlaceRecyclerView(getHappyPlaceList)
+        } else{
+            binding?.rvHappyPlacesList?.visibility = View.GONE
+            binding?.tvNoRecordsAvailable?.visibility = View.VISIBLE
+        }
 
+    }
 
+    private fun setupHappyPlaceRecyclerView(happyPlaceList: ArrayList<HappyPlaceModel>){
+        binding?.rvHappyPlacesList?.layoutManager = LinearLayoutManager(this)
+        binding?.rvHappyPlacesList?.setHasFixedSize(true)
+        binding?.rvHappyPlacesList?.adapter = HappyPlacesAdapter(this, happyPlaceList)
     }
 }
