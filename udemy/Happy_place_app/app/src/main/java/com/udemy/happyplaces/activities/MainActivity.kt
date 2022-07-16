@@ -1,9 +1,9 @@
 package com.udemy.happyplaces.activities
 
 import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,6 +13,7 @@ import com.udemy.happyplaces.database.DatabaseHandler
 import com.udemy.happyplaces.databinding.ActivityMainBinding
 import com.udemy.happyplaces.models.HappyPlaceModel
 import com.udemy.happyplaces.utils.SwipeToEditCallback
+
 
 class MainActivity : AppCompatActivity() {
     private var binding: ActivityMainBinding? = null
