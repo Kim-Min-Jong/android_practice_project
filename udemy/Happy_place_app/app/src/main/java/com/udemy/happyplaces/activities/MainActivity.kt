@@ -8,6 +8,7 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.happyplaces.adapters.HappyPlacesAdapter
+import com.happyplaces.utils.SwipeToDeleteCallback
 import com.udemy.happyplaces.database.DatabaseHandler
 import com.udemy.happyplaces.databinding.ActivityMainBinding
 import com.udemy.happyplaces.models.HappyPlaceModel
@@ -75,6 +76,15 @@ class MainActivity : AppCompatActivity() {
 
         val editItemTouchHelper= ItemTouchHelper(editSwipeHandler)
         editItemTouchHelper.attachToRecyclerView(binding?.rvHappyPlacesList)
+
+        val deleteSwipeHandler = object: SwipeToDeleteCallback(this){
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val adapter = binding?.rvHappyPlacesList?.adapter as HappyPlacesAdapter
+                adapter.removeAt(viewHolder.adapterPosition)
+            }
+        }
+        val deleteItemTouchHelper = ItemTouchHelper(deleteSwipeHandler)
+        deleteItemTouchHelper.attachToRecyclerView(binding?.rvHappyPlacesList)
     }
     companion object {
         var EXTRA_PLACE_DETAILS = "extra_place_details"

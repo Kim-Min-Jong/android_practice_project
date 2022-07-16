@@ -86,16 +86,16 @@ open class HappyPlacesAdapter(
     /**
      * A function to delete the added happy place detail from the local storage.
      */
-//    fun removeAt(position: Int) {
-//
-//        val dbHandler = DatabaseHandler(context)
-//        val isDeleted = dbHandler.deleteHappyPlace(list[position])
-//
-//        if (isDeleted > 0) {
-//            list.removeAt(position)
-//            notifyItemRemoved(position)
-//        }
-//    }
+    fun removeAt(position: Int) {
+
+        val dbHandler = DatabaseHandler(context)
+        val isDeleted = dbHandler.deleteHappyPlace(list[position])
+
+        if (isDeleted > 0) {
+            list.removeAt(position)
+            notifyItemRemoved(position)
+        }
+    }
 
     /**
      * A function to bind the onclickListener.

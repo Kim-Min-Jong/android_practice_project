@@ -171,7 +171,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                             if(addHappyPlace > 0){
                                 setResult(Activity.RESULT_OK)
                                 finish()
-                                Toast.makeText(this, "Swipe to Refresh",Toast.LENGTH_LONG).show()
+                                 Toast.makeText(this, "Swipe to Refresh",Toast.LENGTH_LONG).show()
                             }
                         } else{
                             val updateHappyPlace = dbHandler.updateHappyPlace(happyPlaceModel)
