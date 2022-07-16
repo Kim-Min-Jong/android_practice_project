@@ -44,6 +44,8 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     private var mLatitude: Double = 0.0
     private var mLongitude: Double = 0.0
 
+    private var mHappyPlaceDetails: HappyPlaceModel? = null
+
     // deprecated 된 startActivityForResult 대체 수단
     val getGalleryImageLauncher =
         registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
@@ -84,6 +86,11 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             onBackPressed()
         }
 
+        // edit할 때의 모델 객체 생성
+        if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
+            mHappyPlaceDetails = intent.getParcelableExtra(MainActivity.EXTRA_PLACE_DETAILS)
+        }
+
         dateSetListener = DatePickerDialog.OnDateSetListener {
                 _ , year, month, dayOfMonth ->
                     cal.set(Calendar.YEAR, year)
@@ -92,6 +99,21 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     updateDateInView()
         }
         updateDateInView()
+
+        // 작성이 아닌 글 수정 시 로직
+        if(mHappyPlaceDetails != null){
+            supportActionBar?.title = "Edit Happy Place"
+            binding?.etTitle?.setText(mHappyPlaceDetails!!.title)
+            binding?.etDescription?.setText(mHappyPlaceDetails!!.description)
+            binding?.etDate?.setText(mHappyPlaceDetails!!.date)
+            binding?.etLocation?.setText(mHappyPlaceDetails!!.location)
+            mLatitude = mHappyPlaceDetails!!.latitude
+            mLongitude = mHappyPlaceDetails!!.longitude
+            saveImageToInternalStorage = Uri.parse(mHappyPlaceDetails!!.image)
+            binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
+            binding?.btnSave?.text = "UPDATE"
+        }
+
         binding?.etDate?.setOnClickListener(this)
         binding?.ivPlaceImage?.setOnClickListener(this)
         binding?.btnSave?.setOnClickListener(this)
