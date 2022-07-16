@@ -10,7 +10,7 @@
 
 5. 7Minutes exercise App (2022/07/13 done..maybe to be updated)
 
-6. Happy Places app
+6. Happy Places app (2022/07/16 stop&restart after..map api issue(google, KaKao etc.))
 
 7. weather app
 
