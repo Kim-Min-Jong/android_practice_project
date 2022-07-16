@@ -156,7 +156,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                         Toast.makeText(this,"please select an image", Toast.LENGTH_LONG).show()
                     } else ->{
                         val happyPlaceModel = HappyPlaceModel(
-                            0,
+                            if(mHappyPlaceDetails == null ) 0 else mHappyPlaceDetails!!.id,
                                 binding?.etTitle?.text.toString(),
                                 saveImageToInternalStorage.toString(),
                                 binding?.etDescription?.text.toString(),
@@ -166,12 +166,22 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                                 mLongitude
                             )
                         val dbHandler = DatabaseHandler(this)
-                        val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
-                        if(addHappyPlace > 0){
-                            setResult(Activity.RESULT_OK)
-                            finish()
-                            Toast.makeText(this, "Swipe to Refresh",Toast.LENGTH_LONG).show()
+                        if(mHappyPlaceDetails == null){
+                            val addHappyPlace = dbHandler.addHappyPlace(happyPlaceModel)
+                            if(addHappyPlace > 0){
+                                setResult(Activity.RESULT_OK)
+                                finish()
+                                Toast.makeText(this, "Swipe to Refresh",Toast.LENGTH_LONG).show()
+                            }
+                        } else{
+                            val updateHappyPlace = dbHandler.updateHappyPlace(happyPlaceModel)
+                            if(updateHappyPlace > 0){
+                                setResult(Activity.RESULT_OK)
+                                finish()
+                                Toast.makeText(this, "Swipe to Refresh",Toast.LENGTH_LONG).show()
+                            }
                         }
+
                     }
                 }
             }
