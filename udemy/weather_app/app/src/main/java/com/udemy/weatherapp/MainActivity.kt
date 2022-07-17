@@ -5,7 +5,6 @@ import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
@@ -15,7 +14,6 @@ import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import com.google.android.gms.location.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -23,8 +21,16 @@ import com.karumi.dexter.PermissionToken
 import com.karumi.dexter.listener.PermissionRequest
 import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.udemy.weatherapp.databinding.ActivityMainBinding
+import com.udemy.weatherapp.models.WeatherResponse
+import com.udemy.weatherapp.network.WeatherService
+import org.json.JSONArray
+import org.json.JSONObject
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
+
 
 class MainActivity : AppCompatActivity() {
+    private var key: String? = null
     private var binding: ActivityMainBinding? = null
 
     private lateinit var mFusedLocationClient: FusedLocationProviderClient
@@ -37,17 +43,28 @@ class MainActivity : AppCompatActivity() {
             val longitude = mLastLocation?.longitude
             Log.e("latitude","latitude: $latitude")
             Log.e("longitude","longitude: $longitude")
-            getLocationWeatherDetails()
+            if (latitude != null && longitude != null) {
+                    getLocationWeatherDetails(latitude, longitude)
+            }
         }
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        try{
+            val jsonString = assets.open("key.json").reader().readText()
+            val jsonObject = JSONObject(jsonString)
+            key = jsonObject.getString("key")
+
+        } catch(e: Exception){
+            e.printStackTrace()
+        }
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding?.root)
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity)
 
+        // 위치 권한이 꺼져있으면 권한 요청
         if(!isLocationEnabled()){
             Toast.makeText(this,"Location provider is turned off. please turn on GPS", Toast.LENGTH_SHORT).show()
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
@@ -76,9 +93,44 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun getLocationWeatherDetails(){
+    // retrofit 연결 후 날씨 데이터 가져오기
+    private fun getLocationWeatherDetails(latitude: Double, longitude: Double){
         if(Constants.isNetWorkAvailable(this)){
+            val retrofit: Retrofit = Retrofit.Builder()
+                .baseUrl(Constants.BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
 
+            val service: WeatherService = retrofit.create(WeatherService::class.java)
+
+            val listCall: Call<WeatherResponse> = service.getWeather(
+                latitude, longitude, Constants.METRIC_UNIT, key
+            )
+
+            // 콜백
+            listCall.enqueue(object: Callback<WeatherResponse>{
+                override fun onResponse(
+                    call: Call<WeatherResponse>,
+                    response: Response<WeatherResponse>
+                ) {
+                    if(response.isSuccessful){
+                        val weatherList = response.body()
+                        Log.i("response result", "$weatherList")
+                    }else{
+                        val rc = response.code()
+                        when(rc){
+                            400 -> Log.e("Error 400","Bad Connection")
+                            404 -> Log.e("Error 404","Not Found")
+                            else -> Log.e("Error","Generic Error")
+                        }
+                    }
+                }
+
+                override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                    Log.e("Error",t.message.toString())
+                }
+
+            })
         } else{
 
         }
