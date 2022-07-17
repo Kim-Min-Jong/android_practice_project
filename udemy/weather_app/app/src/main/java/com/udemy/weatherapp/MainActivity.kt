@@ -37,6 +37,7 @@ class MainActivity : AppCompatActivity() {
             val longitude = mLastLocation?.longitude
             Log.e("latitude","latitude: $latitude")
             Log.e("longitude","longitude: $longitude")
+            getLocationWeatherDetails()
         }
     }
 
@@ -72,6 +73,14 @@ class MainActivity : AppCompatActivity() {
                     showRationaleDialogForPermissions()
                 }
             }).onSameThread().check()
+        }
+    }
+
+    private fun getLocationWeatherDetails(){
+        if(Constants.isNetWorkAvailable(this)){
+
+        } else{
+
         }
     }
 
