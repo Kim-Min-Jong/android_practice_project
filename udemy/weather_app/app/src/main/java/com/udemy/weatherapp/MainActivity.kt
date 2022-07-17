@@ -3,6 +3,7 @@ package com.udemy.weatherapp
 import android.Manifest
 import android.annotation.SuppressLint
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.location.Location
@@ -30,6 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var customProgressDialog: Dialog
     private var key: String? = null
     private var binding: ActivityMainBinding? = null
 
@@ -106,7 +108,7 @@ class MainActivity : AppCompatActivity() {
             val listCall: Call<WeatherResponse> = service.getWeather(
                 latitude, longitude, Constants.METRIC_UNIT, key
             )
-
+            showProgressDialog()
             // 콜백
             listCall.enqueue(object: Callback<WeatherResponse>{
                 override fun onResponse(
@@ -114,6 +116,7 @@ class MainActivity : AppCompatActivity() {
                     response: Response<WeatherResponse>
                 ) {
                     if(response.isSuccessful){
+                        cancelProgressDialog()
                         val weatherList = response.body()
                         Log.i("response result", "$weatherList")
                     }else{
@@ -127,6 +130,7 @@ class MainActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
+                    cancelProgressDialog()
                     Log.e("Error",t.message.toString())
                 }
 
@@ -171,5 +175,21 @@ class MainActivity : AppCompatActivity() {
             mLocationRequest, mLocationCallback , Looper.myLooper()
         )
     }
+    private fun showProgressDialog() {
+        customProgressDialog = Dialog(this@MainActivity)
 
+        /*Set the screen content from a layout resource.
+        The resource will be inflated, adding all top-level views to the screen.*/
+        customProgressDialog.setContentView(R.layout.dialog_custom_progress)
+
+        //Start the dialog and display it on screen.
+        customProgressDialog.show()
+    }
+
+    /**
+     * This function is used to dismiss the progress dialog if it is visible to user.
+     */
+    private fun cancelProgressDialog() {
+        customProgressDialog.dismiss()
+    }
 }
