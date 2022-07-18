@@ -12,5 +12,5 @@
 
 6. Happy Places app (2022/07/16 stop&restart after..map api issue(google, KaKao etc.))
 
-7. weather app
+7. weather app (2022/07/18 done)
 
