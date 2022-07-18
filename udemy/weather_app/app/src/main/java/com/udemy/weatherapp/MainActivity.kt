@@ -15,6 +15,8 @@ import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.annotation.RequiresApi
 import com.google.android.gms.location.*
@@ -69,9 +71,13 @@ class MainActivity : AppCompatActivity() {
 
         mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this@MainActivity)
 
+        binding?.swipell?.setOnRefreshListener {
+            requestLocationData()
+            binding?.swipell?.isRefreshing = false
+        }
         // 위치 권한이 꺼져있으면 권한 요청
         if(!isLocationEnabled()){
-            Toast.makeText(this,"Location provider is turned off. please turn on GPS", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this@MainActivity,"Location provider is turned off. please turn on GPS", Toast.LENGTH_SHORT).show()
             val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
             startActivity(intent)
         } else{
@@ -95,6 +101,23 @@ class MainActivity : AppCompatActivity() {
                     showRationaleDialogForPermissions()
                 }
             }).onSameThread().check()
+        }
+    }
+
+    //액션바에 아이콘 넣기
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_main, menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.action_refresh -> {
+                Toast.makeText(this@MainActivity,"refreshed",Toast.LENGTH_SHORT).show()
+                requestLocationData()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
