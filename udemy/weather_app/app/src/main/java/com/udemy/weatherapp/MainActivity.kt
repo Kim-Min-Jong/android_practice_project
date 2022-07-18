@@ -29,6 +29,8 @@ import com.udemy.weatherapp.network.WeatherService
 import org.json.JSONObject
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainActivity : AppCompatActivity() {
@@ -203,7 +205,18 @@ class MainActivity : AppCompatActivity() {
             Log.i("Whether Name", weatherList.weather.toString())
             binding?.tvMain?.text = weatherList.weather[i].main
             binding?.tvMainDescription?.text = weatherList.weather[i].description
-            binding?.tvTemp?.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.locales.toString())
+            binding?.tvTemp?.text = "%.2f".format(weatherList.main.temp-273.15) + getUnit(application.resources.configuration.locales.toString())
+
+            binding?.tvSunriseTime?.text = unixTime(weatherList.sys.sunrise)
+            binding?.tvSunsetTime?.text = unixTime(weatherList.sys.sunset)
+
+            binding?.tvHumidity?.text = weatherList.main.humidity.toString() + "percent"
+            binding?.tvMin?.text = "%.2f".format(weatherList.main.temp_min-273.15) + " min"
+            binding?.tvMax?.text = "%.2f".format(weatherList.main.temp_max-273.15) + " max"
+            binding?.tvSpeed?.text = weatherList.wind.speed.toString()
+            binding?.tvName?.text = weatherList.name
+            binding?.tvCountry?.text = weatherList.sys.country
+
         }
     }
 
@@ -213,5 +226,12 @@ class MainActivity : AppCompatActivity() {
             values = "°F"
         }
         return values
+    }
+
+    private fun unixTime(timex: Long):String?{
+        val date = Date(timex* 1000L)
+        val sdf = SimpleDateFormat("HH:mm", Locale.KOREA)
+        sdf.timeZone = TimeZone.getDefault()
+        return sdf.format(date)
     }
 }
