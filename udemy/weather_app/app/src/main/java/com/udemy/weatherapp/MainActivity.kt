@@ -9,12 +9,14 @@ import android.content.Intent
 import android.location.Location
 import android.location.LocationManager
 import android.net.Uri
+import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Looper
 import android.provider.Settings
 import android.util.Log
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import com.google.android.gms.location.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
@@ -24,7 +26,6 @@ import com.karumi.dexter.listener.multi.MultiplePermissionsListener
 import com.udemy.weatherapp.databinding.ActivityMainBinding
 import com.udemy.weatherapp.models.WeatherResponse
 import com.udemy.weatherapp.network.WeatherService
-import org.json.JSONArray
 import org.json.JSONObject
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
@@ -83,7 +84,7 @@ class MainActivity : AppCompatActivity() {
                         requestLocationData()
 
                     }
-                    if(report!!.isAnyPermissionPermanentlyDenied){
+                    if(report.isAnyPermissionPermanentlyDenied){
                         Toast.makeText(this@MainActivity, "you have denied location permission. Please all enable permission", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -111,6 +112,7 @@ class MainActivity : AppCompatActivity() {
             showProgressDialog()
             // 콜백
             listCall.enqueue(object: Callback<WeatherResponse>{
+                @RequiresApi(Build.VERSION_CODES.N)
                 override fun onResponse(
                     call: Call<WeatherResponse>,
                     response: Response<WeatherResponse>
@@ -118,6 +120,7 @@ class MainActivity : AppCompatActivity() {
                     if(response.isSuccessful){
                         cancelProgressDialog()
                         val weatherList = response.body()
+                        setupUI(weatherList!!)
                         Log.i("response result", "$weatherList")
                     }else{
                         val rc = response.code()
@@ -167,7 +170,7 @@ class MainActivity : AppCompatActivity() {
     // 현재 위치 요청
     @SuppressLint("MissingPermission")
     fun requestLocationData() {
-        val mLocationRequest = LocationRequest.create()?.apply{
+        val mLocationRequest = LocationRequest.create().apply{
             priority = Priority.PRIORITY_HIGH_ACCURACY
         }
 
@@ -191,5 +194,24 @@ class MainActivity : AppCompatActivity() {
      */
     private fun cancelProgressDialog() {
         customProgressDialog.dismiss()
+    }
+
+    @SuppressLint("SetTextI18n")
+    @RequiresApi(Build.VERSION_CODES.N)
+    private fun setupUI(weatherList: WeatherResponse){
+        for(i in weatherList.weather.indices){
+            Log.i("Whether Name", weatherList.weather.toString())
+            binding?.tvMain?.text = weatherList.weather[i].main
+            binding?.tvMainDescription?.text = weatherList.weather[i].description
+            binding?.tvTemp?.text = weatherList.main.temp.toString() + getUnit(application.resources.configuration.locales.toString())
+        }
+    }
+
+    private fun getUnit(value: String):String{
+        var values = "°C"
+        if("US" == value || "LR" == value || "MM" == value){
+            values = "°F"
+        }
+        return values
     }
 }
