@@ -19,6 +19,7 @@ captures/
 *.apk
 output.json
 key.json
+key.xml
 
 # IntelliJ
 *.iml
