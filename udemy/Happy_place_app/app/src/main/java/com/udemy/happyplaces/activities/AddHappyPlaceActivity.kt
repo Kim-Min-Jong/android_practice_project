@@ -1,6 +1,7 @@
 package com.udemy.happyplaces.activities
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.app.AlertDialog
 import android.app.DatePickerDialog
@@ -9,17 +10,21 @@ import android.content.ContextWrapper
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Matrix
+import android.location.Location
+import android.location.LocationManager
 import android.net.Uri
 import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Looper
 import android.provider.MediaStore
 import android.provider.Settings
+import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
-import com.google.android.libraries.places.api.Places
+import com.google.android.gms.location.*
 import com.karumi.dexter.Dexter
 import com.karumi.dexter.MultiplePermissionsReport
 import com.karumi.dexter.PermissionToken
@@ -29,13 +34,16 @@ import com.udemy.happyplaces.R
 import com.udemy.happyplaces.database.DatabaseHandler
 import com.udemy.happyplaces.databinding.ActivityAddHappyPlaceBinding
 import com.udemy.happyplaces.models.HappyPlaceModel
+import net.daum.mf.map.api.MapPoint
+import net.daum.mf.map.api.MapReverseGeoCoder
+import net.daum.mf.map.api.MapReverseGeoCoder.ReverseGeoCodingResultListener
 import java.io.File
 import java.io.FileOutputStream
 import java.io.OutputStream
 import java.text.SimpleDateFormat
 import java.util.*
 
-class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
+class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
     private var binding: ActivityAddHappyPlaceBinding? = null
     private var cal = Calendar.getInstance()
     private lateinit var dateSetListener: DatePickerDialog.OnDateSetListener
@@ -46,6 +54,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
     private var mLongitude: Double = 0.0
 
     private var mHappyPlaceDetails: HappyPlaceModel? = null
+    private lateinit var mFusedLocationClient: FusedLocationProviderClient
 
     // deprecated 된 startActivityForResult 대체 수단
     val getGalleryImageLauncher =
@@ -87,6 +96,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
             onBackPressed()
         }
 
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this@AddHappyPlaceActivity)
 
         // edit할 때의 모델 객체 생성
         if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
@@ -101,6 +111,32 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     updateDateInView()
         }
         updateDateInView()
+        if(!isLocationEnabled()){
+            Toast.makeText(this@AddHappyPlaceActivity, "provider is turned off. please turn on GPS", Toast.LENGTH_SHORT).show()
+            val intent = Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS)
+            startActivity(intent)
+        } else{
+            Dexter.withActivity(this).withPermissions(
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION
+            ).withListener(object: MultiplePermissionsListener {
+                // 권한이 확인되면
+                override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
+                    if(report!!.areAllPermissionsGranted()){
+
+                        requestLocationData()
+
+                    }
+                    if(report.isAnyPermissionPermanentlyDenied){
+                        Toast.makeText(this@AddHappyPlaceActivity, "you have denied location permission. Please all enable permission", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                // 권한이 필요한지 보여줘야함
+                override fun onPermissionRationaleShouldBeShown(permissions: MutableList<PermissionRequest>, token: PermissionToken) {
+                    showRationaleDialogForPermissions()
+                }
+            }).onSameThread().check()
+        }
 
         // 작성이 아닌 글 수정 시 로직
         if(mHappyPlaceDetails != null){
@@ -194,9 +230,52 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
                     e.printStackTrace()
                 }
             }
+            R.id.tv_select_current_location -> {
+
+            }
         }
     }
+    private fun openMap(latitude: Double, longitude: Double) {
+        val point = MapPoint.mapPointWithGeoCoord(latitude, longitude)
+        // 카카오 맵 내장 함수는 rest api 키 값으로 접근해야함
+        val mapView = MapReverseGeoCoder(resources.getString(R.string.rest_api_key),
+                point, object: ReverseGeoCodingResultListener{
+                override fun onReverseGeoCoderFoundAddress(p0: MapReverseGeoCoder?, p1: String?) {
+                    Log.e("addressSuccess",p1!!)
+                    updateLocationInView(p1)
+                }
+                override fun onReverseGeoCoderFailedToFindAddress(p0: MapReverseGeoCoder?) {
+                    Log.e("addressFail", p0.toString())
+                }
+            }, this
+            )
+        mapView.startFindingAddress()
+    }
+    @SuppressLint("MissingPermission")
+    fun requestLocationData() {
+        // 받을 위치 콜백
+        val mLocationCallback = object: LocationCallback(){
+            override fun onLocationResult(p0: LocationResult) {
+                val mLastLocation: Location? = p0.lastLocation
+                val latitude = mLastLocation?.latitude
+                val longitude = mLastLocation?.longitude
+                Log.e("latitude","latitude: $latitude")
+                Log.e("longitude","longitude: $longitude")
+                if (latitude != null && longitude != null) {
+                    mLatitude = latitude
+                    mLongitude = longitude
+                    openMap(latitude, longitude)
+                }
+            }
+        }
+        val mLocationRequest = LocationRequest.create().apply{
+            priority = Priority.PRIORITY_HIGH_ACCURACY
+        }
 
+        mFusedLocationClient.requestLocationUpdates(
+            mLocationRequest, mLocationCallback , Looper.myLooper()
+        )
+    }
     private fun takePhotoFromCamera(){
         Dexter.withActivity(this).withPermissions(
             Manifest.permission.WRITE_EXTERNAL_STORAGE,
@@ -277,6 +356,16 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener {
         val format = "yyyy.MM.dd"
         val sdf = SimpleDateFormat(format, Locale.getDefault())
         binding?.etDate?.setText(sdf.format(cal.time).toString())
+    }
+    private fun updateLocationInView(location: String){
+        binding?.etLocation?.setText(location)
+    }
+
+    private fun isLocationEnabled(): Boolean{
+        val locationMgr: LocationManager =
+            getSystemService(Context.LOCATION_SERVICE) as LocationManager
+        return locationMgr.isProviderEnabled(LocationManager.GPS_PROVIDER)
+                || locationMgr.isProviderEnabled(LocationManager.NETWORK_PROVIDER)
     }
 
     companion object {
