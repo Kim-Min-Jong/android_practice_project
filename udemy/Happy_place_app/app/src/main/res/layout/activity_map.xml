@@ -17,9 +17,8 @@
         app:layout_constraintTop_toTopOf="parent" />
 
     <!--A support fragment is added for the map view.-->
-    <fragment
-        android:id="@+id/map"
-        class="com.google.android.gms.maps.SupportMapFragment"
+    <RelativeLayout
+        android:id="@+id/map_view"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
