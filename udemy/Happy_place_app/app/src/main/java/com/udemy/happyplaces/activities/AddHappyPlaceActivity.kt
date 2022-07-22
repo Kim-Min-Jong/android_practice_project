@@ -156,6 +156,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         binding?.ivPlaceImage?.setOnClickListener(this)
         binding?.btnSave?.setOnClickListener(this)
         binding?.etLocation?.setOnClickListener(this)
+        binding?.tvSelectAnotherLocation?.setOnClickListener(this)
     }
 
     // a모든 클릭 리스너
@@ -230,8 +231,11 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     e.printStackTrace()
                 }
             }
-            R.id.tv_select_current_location -> {
-
+            R.id.tv_select_another_location -> {
+                val coords = doubleArrayOf(mLatitude,mLongitude)
+                val intent = Intent(this, MapActivity::class.java)
+                intent.putExtra("coords",coords)
+                startActivity(intent)
             }
         }
     }
