@@ -57,8 +57,6 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
                 val newLatitude = marker.mapPoint.mapPointGeoCoord.latitude
                 val newLongitude = marker.mapPoint.mapPointGeoCoord.longitude
                 val intent = Intent(this@MapActivity, AddHappyPlaceActivity::class.java)
-                println(newLatitude)
-                println(newLongitude)
                 intent.putExtra(NEW_POINT,doubleArrayOf(newLatitude,newLongitude))
                 intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                 startActivity(intent)
