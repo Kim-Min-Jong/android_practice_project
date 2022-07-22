@@ -102,7 +102,13 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
         if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)){
             mHappyPlaceDetails = intent.getParcelableExtra(MainActivity.EXTRA_PLACE_DETAILS)
         }
+        if(intent.hasExtra(MapActivity.NEW_POINT)){
+            val newCoords = intent.getDoubleArrayExtra(MapActivity.NEW_POINT)
 
+            mLatitude = newCoords!![0]
+            mLongitude = newCoords[1]
+            openMap(newCoords[0], newCoords[1])
+        }
         dateSetListener = DatePickerDialog.OnDateSetListener {
                 _ , year, month, dayOfMonth ->
                     cal.set(Calendar.YEAR, year)
@@ -123,9 +129,9 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                 // 권한이 확인되면
                 override fun onPermissionsChecked(report: MultiplePermissionsReport?) {
                     if(report!!.areAllPermissionsGranted()){
-
-                        requestLocationData()
-
+                        if(!intent.hasExtra(MapActivity.NEW_POINT)) {
+                            requestLocationData()
+                        }
                     }
                     if(report.isAnyPermissionPermanentlyDenied){
                         Toast.makeText(this@AddHappyPlaceActivity, "you have denied location permission. Please all enable permission", Toast.LENGTH_SHORT).show()
@@ -150,6 +156,7 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
             saveImageToInternalStorage = Uri.parse(mHappyPlaceDetails!!.image)
             binding?.ivPlaceImage?.setImageURI(saveImageToInternalStorage)
             binding?.btnSave?.text = "UPDATE"
+            binding?.tvSelectAnotherLocation?.visibility = View.GONE
         }
 
         binding?.etDate?.setOnClickListener(this)
@@ -168,7 +175,6 @@ class AddHappyPlaceActivity : AppCompatActivity(), View.OnClickListener{
                     .show()
             }
             R.id.iv_place_image ->{
-                println(1)
                 val pictureDialog = AlertDialog.Builder(this)
                 pictureDialog.setTitle("Select Action")
                 val pictureDialogItems = arrayOf("Select photo from Gallery", "Capture photo from Camera")

@@ -1,10 +1,13 @@
 package com.udemy.happyplaces.activities
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import com.udemy.happyplaces.R
 import com.udemy.happyplaces.databinding.ActivityMapBinding
 import com.udemy.happyplaces.models.HappyPlaceModel
 import net.daum.mf.map.api.MapPOIItem
@@ -32,7 +35,7 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
         binding?.toolbarMap?.setNavigationOnClickListener {
             onBackPressed()
         }
-        println(markerList)
+
         if(intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)) {
             initMapMarked()
         }else{
@@ -41,6 +44,30 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
         }
     }
 
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        if(!intent.hasExtra(MainActivity.EXTRA_PLACE_DETAILS)) {
+            menuInflater.inflate(R.menu.menu_main, menu)
+        }
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when(item.itemId){
+            R.id.action_done -> {
+                val newLatitude = marker.mapPoint.mapPointGeoCoord.latitude
+                val newLongitude = marker.mapPoint.mapPointGeoCoord.longitude
+                val intent = Intent(this@MapActivity, AddHappyPlaceActivity::class.java)
+                println(newLatitude)
+                println(newLongitude)
+                intent.putExtra(NEW_POINT,doubleArrayOf(newLatitude,newLongitude))
+                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                startActivity(intent)
+                finish()
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
     private fun initMapMarked(){
         val mapView = MapView(this)
         val mapViewContainer = binding?.mapView
@@ -84,7 +111,6 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
     }
 
     override fun onMapViewZoomLevelChanged(p0: MapView?, p1: Int) {
-        Toast.makeText(this@MapActivity, "zoom level changed", Toast.LENGTH_SHORT).show()
     }
 
     override fun onMapViewSingleTapped(p0: MapView?, p1: MapPoint?) {
@@ -143,6 +169,10 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
     }
     override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
         // 마커의 속성 중 isDraggable = true 일 때 마커를 이동시켰을 경우
+    }
+
+    companion object {
+        var NEW_POINT = "new_point"
     }
 }
 
