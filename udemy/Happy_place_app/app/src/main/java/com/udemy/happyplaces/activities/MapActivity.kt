@@ -54,14 +54,23 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when(item.itemId){
             R.id.action_done -> {
-                val newLatitude = marker.mapPoint.mapPointGeoCoord.latitude
-                val newLongitude = marker.mapPoint.mapPointGeoCoord.longitude
-                val intent = Intent(this@MapActivity, AddHappyPlaceActivity::class.java)
-                intent.putExtra(NEW_POINT,doubleArrayOf(newLatitude,newLongitude))
-                intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                startActivity(intent)
-                finish()
-                true
+                if (markerList.isEmpty()) {
+                    Toast.makeText(
+                        this@MapActivity,
+                        "place the marker then click set button",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                    true
+                } else {
+                    val newLatitude = marker.mapPoint.mapPointGeoCoord.latitude
+                    val newLongitude = marker.mapPoint.mapPointGeoCoord.longitude
+                    val intent = Intent(this@MapActivity, AddHappyPlaceActivity::class.java)
+                    intent.putExtra(NEW_POINT, doubleArrayOf(newLatitude, newLongitude))
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                    startActivity(intent)
+                    finish()
+                    true
+                }
             }
             else -> super.onOptionsItemSelected(item)
         }
