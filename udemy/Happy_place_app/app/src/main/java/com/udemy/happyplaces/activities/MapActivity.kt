@@ -95,6 +95,7 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
         marker.itemName = "happy place"
         marker.markerType = MapPOIItem.MarkerType.RedPin
         marker.selectedMarkerType = MapPOIItem.MarkerType.YellowPin
+        marker.isDraggable = true
         mapView.setMapCenterPoint(MapPoint.mapPointWithGeoCoord(coords[0], coords[1]) ,true)
         mapView.setMapViewEventListener(this)
         mapView.setPOIItemEventListener(this)
@@ -167,6 +168,11 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
     }
     override fun onDraggablePOIItemMoved(p0: MapView?, p1: MapPOIItem?, p2: MapPoint?) {
         // 마커의 속성 중 isDraggable = true 일 때 마커를 이동시켰을 경우
+        marker.mapPoint = p2!!
+        if(markerList.isEmpty()) {
+            p0?.addPOIItem(marker)
+            markerList.add(marker)
+        }
     }
 
     companion object {
