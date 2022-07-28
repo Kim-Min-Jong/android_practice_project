@@ -136,12 +136,15 @@ class MapActivity : AppCompatActivity(), MapView.MapViewEventListener, MapView.P
     }
 
     override fun onMapViewDragStarted(p0: MapView?, p1: MapPoint?) {
+        Toast.makeText(this@MapActivity,"drag the map and find your happy place", Toast.LENGTH_SHORT).show()
     }
 
     override fun onMapViewDragEnded(p0: MapView?, p1: MapPoint?) {
+        Toast.makeText(this@MapActivity,"now marking on map", Toast.LENGTH_SHORT).show()
     }
 
     override fun onMapViewMoveFinished(p0: MapView?, p1: MapPoint?) {
+        Toast.makeText(this@MapActivity,"now marking on map", Toast.LENGTH_SHORT).show()
     }
 
 
