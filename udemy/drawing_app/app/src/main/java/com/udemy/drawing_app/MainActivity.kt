@@ -4,6 +4,7 @@ import android.Manifest
 import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.Dialog
+import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -11,8 +12,10 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.media.MediaScannerConnection
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.view.View
 import android.widget.*
@@ -27,9 +30,7 @@ import androidx.lifecycle.lifecycleScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
+import java.io.*
 
 class MainActivity : AppCompatActivity() {
     private var drawingView: DrawingView? = null
@@ -101,11 +102,12 @@ class MainActivity : AppCompatActivity() {
         val save :ImageButton = findViewById(R.id.ib_save)
         save.setOnClickListener {
             // 비동기 실행
-            if(isReadStorageAllowed()){
+            if(isReadStorageAllowed() && isWriteStorageAllowed()){
                 showCustomProgressDialog()
                 lifecycleScope.launch {
                     val flDrawingView:FrameLayout = findViewById(R.id.fl_drawing_container)
                     saveBitmapFile(getBitmapFromView(flDrawingView))
+                    imageExternalSave(applicationContext, getBitmapFromView(flDrawingView))
                 }
             }
         }
@@ -162,7 +164,11 @@ class MainActivity : AppCompatActivity() {
             Manifest.permission.READ_EXTERNAL_STORAGE)
         return result == PackageManager.PERMISSION_GRANTED
     }
-
+    private fun isWriteStorageAllowed(): Boolean{
+        val result =  ContextCompat.checkSelfPermission(this,
+            Manifest.permission.WRITE_EXTERNAL_STORAGE)
+        return result == PackageManager.PERMISSION_GRANTED
+    }
     private fun requestStoragePermission(){
         if(ActivityCompat.shouldShowRequestPermissionRationale(
                 this,
@@ -243,7 +249,45 @@ class MainActivity : AppCompatActivity() {
         }
         return result
     }
+    private suspend fun imageExternalSave(context: Context, bitmap: Bitmap?) {
+        withContext(Dispatchers.IO){
+            val fileName = "${System.currentTimeMillis().toString()}.png"
+            val cr = context.contentResolver
+            val contentValues = ContentValues().apply {
+                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
+                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
+                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/drawingApp")
+                put(MediaStore.Images.Media.IS_PENDING, 1)
+            }
+            println(contentValues)
+            val item = cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
 
+            try{
+                val pdf = item?.let{
+                    it -> cr.openFileDescriptor(it, "w", null)
+                }
+                if(pdf != null){
+                    val fos = FileOutputStream(pdf.fileDescriptor)
+                    // 바이트 배열 출력 스트림으로 이미지 출력
+                    val bytes = ByteArrayOutputStream()
+                    // 비트맵 압축 (압축형식 ,90% 수준, 출력 스트림)
+                    bitmap?.compress(Bitmap.CompressFormat.PNG, 90, bytes)
+                    fos.write(bytes.toByteArray())
+                    fos.flush()
+                    fos.close()
+                    pdf.close()
+                    cr.update(item, contentValues, null, null)
+
+
+                }
+            } catch (e: IOException) {}
+              catch (e:FileNotFoundException){}
+            contentValues.clear()
+            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
+            item?.let{ it -> cr.update(it, contentValues, null, null) }
+
+        }
+    }
     private fun showRationaleDialog(
         title: String,
         message: String,
