@@ -17,6 +17,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.util.Log
 import android.view.View
 import android.widget.*
 import androidx.activity.result.ActivityResult
@@ -106,8 +107,11 @@ class MainActivity : AppCompatActivity() {
                 showCustomProgressDialog()
                 lifecycleScope.launch {
                     val flDrawingView:FrameLayout = findViewById(R.id.fl_drawing_container)
-                    saveBitmapFile(getBitmapFromView(flDrawingView))
-                    imageExternalSave(applicationContext, getBitmapFromView(flDrawingView))
+//                    saveBitmapFile(getBitmapFromView(flDrawingView))
+                    val path = imageExternalSave(applicationContext, getBitmapFromView(flDrawingView))
+                    if (path != null) {
+                        galleryRenewal(applicationContext, path)
+                    }
                 }
             }
         }
@@ -249,44 +253,59 @@ class MainActivity : AppCompatActivity() {
         }
         return result
     }
-    private suspend fun imageExternalSave(context: Context, bitmap: Bitmap?) {
+    private suspend fun imageExternalSave(context: Context, mBitmap: Bitmap?): String? {
+        // 결과(이미지) 담을 변수
+        var result = ""
+        var path:String? = null
+        var fileName:String? = null
+        //async task
         withContext(Dispatchers.IO){
-            val fileName = "${System.currentTimeMillis().toString()}.png"
-            val cr = context.contentResolver
-            val contentValues = ContentValues().apply {
-                put(MediaStore.MediaColumns.DISPLAY_NAME, fileName)
-                put(MediaStore.MediaColumns.MIME_TYPE, "image/png")
-                put(MediaStore.Images.Media.RELATIVE_PATH, "Pictures/drawingApp")
-                put(MediaStore.Images.Media.IS_PENDING, 1)
-            }
-            println(contentValues)
-            val item = cr.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, contentValues)
-
-            try{
-                val pdf = item?.let{
-                    it -> cr.openFileDescriptor(it, "w", null)
-                }
-                if(pdf != null){
-                    val fos = FileOutputStream(pdf.fileDescriptor)
+            if(mBitmap != null){
+                // 오류가 날 수 있기때문에 출력스트림 이용
+                try{
                     // 바이트 배열 출력 스트림으로 이미지 출력
                     val bytes = ByteArrayOutputStream()
                     // 비트맵 압축 (압축형식 ,90% 수준, 출력 스트림)
-                    bitmap?.compress(Bitmap.CompressFormat.PNG, 90, bytes)
-                    fos.write(bytes.toByteArray())
-                    fos.flush()
-                    fos.close()
-                    pdf.close()
-                    cr.update(item, contentValues, null, null)
+                    mBitmap.compress(Bitmap.CompressFormat.PNG, 90, bytes)
+                    // 저장할 파일  (파일을 저장할 경로 및 파일 이름 설정
+                    path = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_PICTURES).absolutePath + File.separator + "DrawingApp"
+                    fileName = File.separator + "DrawingApp_"+ System.currentTimeMillis() / 1000 + ".png"
+                    val f = File(path)
+                    if(!f.exists()) f.mkdirs()
+                    val res = File(path + fileName)
+                    // 출력 스트림 -- 실제 쓰기 과정
+                    val fo = FileOutputStream(res)
+                    fo.write(bytes.toByteArray())
+                    fo.close()
 
+                    result = f.absolutePath
 
+                    // 위는 백그라운드실행
+                    // 이제는 ui 쓰레드에서 실행행
+                    runOnUiThread {
+                        cancelProgressDialog()
+                        if(result.isNotEmpty()){
+                            Toast.makeText(applicationContext,"File saved successfully: $result",Toast.LENGTH_LONG).show()
+                            showShareDialog(result)
+                        }else{
+                            Toast.makeText(applicationContext,"File saved Failed..", Toast.LENGTH_LONG).show()
+                        }
+                    }
+                } catch(e:Exception) {  // 실패하면
+                    result = ""
+                    e.printStackTrace()
                 }
-            } catch (e: IOException) {}
-              catch (e:FileNotFoundException){}
-            contentValues.clear()
-            contentValues.put(MediaStore.Images.Media.IS_PENDING, 0)
-            item?.let{ it -> cr.update(it, contentValues, null, null) }
-
+            }
         }
+        return path + fileName
+    }
+    private fun galleryRenewal(context: Context, path: String){
+        val file = File(path)
+        MediaScannerConnection.scanFile(context,
+            arrayOf(file.toString()),
+            null
+        ) { _, p1 -> Log.i("done!!", path) }
+
     }
     private fun showRationaleDialog(
         title: String,
