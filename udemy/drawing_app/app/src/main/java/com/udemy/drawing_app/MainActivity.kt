@@ -1,10 +1,8 @@
 package com.udemy.drawing_app
 
 import android.Manifest
-import android.Manifest.permission.READ_EXTERNAL_STORAGE
 import android.app.Activity
 import android.app.Dialog
-import android.content.ContentValues
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -12,7 +10,6 @@ import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Color
 import android.media.MediaScannerConnection
-import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.Environment
@@ -20,7 +17,6 @@ import android.provider.MediaStore
 import android.util.Log
 import android.view.View
 import android.widget.*
-import androidx.activity.result.ActivityResult
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
