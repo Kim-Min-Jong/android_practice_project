@@ -4,11 +4,15 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
@@ -40,11 +44,20 @@ fun UnitConverter() {
         })
         // 그 안에서 Row 가로행 컴포넌트 생성
         Row {
-            // toast를 위한 context
-            val context = LocalContext.current
-            Button(onClick = { Toast.makeText(context, "Clicked", Toast.LENGTH_SHORT).show() }) {
-                Text(text = "Click Me!")
+            // modifier에 조정가능한 빈 상자
+            Box(modifier = Modifier) {
+                Button(onClick = { /*TODO*/ }) {
+                    Text(text = "Select")
+                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
+                }
             }
+            Box(modifier = Modifier) {
+                Button(onClick = { /*TODO*/ }) {
+                    Text(text = "Select")
+                    Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
+                }
+            }
+
         }
         Text(text = "Result:")
     }
