@@ -1,6 +1,7 @@
 package com.pr.unit_conversion
 
 import android.os.Bundle
+import android.widget.Space
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -12,9 +13,12 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.Button
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -49,7 +53,7 @@ fun UnitConverter() {
         verticalArrangement = Arrangement.Center, // 수직 중앙 정렬
         horizontalAlignment = Alignment.CenterHorizontally // 수평 중앙 정렬
     ) {
-        Text(text = "Unit Converter",  modifier = Modifier.padding(8.dp))
+        Text(text = "Unit Converter", modifier = Modifier.padding(8.dp))
         // 간격 컴포저블
         Spacer(modifier = Modifier.height(16.dp))
         // (있어야하는 파라미터) 텍스트 및 텍스트가 입력되었을 때 실행될 콜백 등록
@@ -65,11 +69,76 @@ fun UnitConverter() {
                     Text(text = "Select")
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
                 }
+                DropdownMenu(
+                    // 열려있는지? state를 잘 활용해야함
+                    expanded = false,
+                    // 드롭다운이 닫히면 실행 될 콜백
+                    onDismissRequest = { /*TODO*/ }
+                ) {
+                    // 드롭다운 메뉴 추가
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "Centimeter")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "Meters")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "Feet")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "MilliMeters")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                }
             }
+            Spacer(modifier = Modifier.width(16.dp))
             Box {
                 Button(onClick = { /*TODO*/ }) {
                     Text(text = "Select")
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
+                }
+                DropdownMenu(
+                    // 열려있는지? state를 잘 활용해야함
+                    expanded = false,
+                    // 드롭다운이 닫히면 실행 될 콜백
+                    onDismissRequest = { /*TODO*/ }
+                ) {
+                    // 드롭다운 메뉴 추가
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "Centimeter")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "Meters")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "Feet")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = "MilliMeters")
+                        },
+                        onClick = { /*TODO*/ }
+                    )
                 }
             }
 
