@@ -39,5 +39,14 @@ fun UnitConverter() {
         Row {
 
         }
+        Text(text= "Result:")
     }
 }
+
+// 전체 빌드 방지를 위한 프리뷰
+@Preview(showBackground = true)
+@Composable
+fun UnitConverterPreview() {
+    UnitConverter()
+}
+
