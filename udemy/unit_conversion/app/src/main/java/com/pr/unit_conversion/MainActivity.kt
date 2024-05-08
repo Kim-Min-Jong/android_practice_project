@@ -83,9 +83,15 @@ fun UnitConverter() {
         // 간격 컴포저블
         Spacer(modifier = Modifier.height(16.dp))
         // (있어야하는 파라미터) 텍스트 및 텍스트가 입력되었을 때 실행될 콜백 등록
-        OutlinedTextField(value = "", onValueChange = {
-            // 익명함수 스코프
-        })
+        OutlinedTextField(
+            value = inputValue,
+            onValueChange = {
+                // 익명함수 스코프
+                inputValue = it
+            },
+            // placeholder ?
+            label = { Text(text = "Enter Value") }
+        )
         Spacer(modifier = Modifier.height(16.dp))
         // 그 안에서 Row 가로행 컴포넌트 생성
         Row {
