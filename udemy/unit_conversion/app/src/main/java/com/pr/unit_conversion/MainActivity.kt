@@ -97,7 +97,7 @@ fun UnitConverter() {
         Row {
             // modifier에 조정가능한 빈 상자
             Box {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { isInputExpanded = !isInputExpanded }) {
                     Text(text = "Select")
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
                 }
@@ -105,14 +105,18 @@ fun UnitConverter() {
                     // 열려있는지? state를 잘 활용해야함
                     expanded = isInputExpanded,
                     // 드롭다운이 닫히면 실행 될 콜백
-                    onDismissRequest = { /*TODO*/ }
+                    onDismissRequest = { isInputExpanded = false  }
                 ) {
                     // 드롭다운 메뉴 추가
                     DropdownMenuItem(
                         text = {
                             Text(text = "Centimeter")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isInputExpanded = false
+                            inputUnit = "Centimeter"
+                            conversionFactor = 0.01
+                        }
                     )
                     DropdownMenuItem(
                         text = {
@@ -136,7 +140,7 @@ fun UnitConverter() {
             }
             Spacer(modifier = Modifier.width(16.dp))
             Box {
-                Button(onClick = { /*TODO*/ }) {
+                Button(onClick = { isOutputExpanded = !isOutputExpanded }) {
                     Text(text = "Select")
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
                 }
@@ -144,7 +148,7 @@ fun UnitConverter() {
                     // 열려있는지? state를 잘 활용해야함
                     expanded = isOutputExpanded,
                     // 드롭다운이 닫히면 실행 될 콜백
-                    onDismissRequest = { /*TODO*/ }
+                    onDismissRequest = { isOutputExpanded = false }
                 ) {
                     // 드롭다운 메뉴 추가
                     DropdownMenuItem(
