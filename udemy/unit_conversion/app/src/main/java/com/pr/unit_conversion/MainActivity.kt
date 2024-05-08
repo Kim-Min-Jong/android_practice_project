@@ -69,12 +69,15 @@ fun UnitConverter() {
     }
     // 변환 승수
     var conversionFactor by remember {
-        mutableStateOf(0.01)
+        mutableStateOf(1.0)
+    }
+    var outputConversionFactor by remember {
+        mutableStateOf(1.0)
     }
 
     fun convertUnits() {
         val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
-        val result = (inputValueDouble * conversionFactor * 100.0).roundToInt() / 100.0
+        val result = (inputValueDouble * conversionFactor * 100.0 / outputConversionFactor).roundToInt() / 100.0
         outputValue = result.toString()
     }
 
@@ -94,6 +97,7 @@ fun UnitConverter() {
             onValueChange = {
                 // 익명함수 스코프
                 inputValue = it
+                convertUnits()
             },
             // placeholder ?
             label = { Text(text = "Enter Value") }
@@ -104,7 +108,7 @@ fun UnitConverter() {
             // modifier에 조정가능한 빈 상자
             Box {
                 Button(onClick = { isInputExpanded = !isInputExpanded }) {
-                    Text(text = "Select")
+                    Text(text = inputUnit)
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
                 }
                 DropdownMenu(
@@ -163,7 +167,7 @@ fun UnitConverter() {
             Spacer(modifier = Modifier.width(16.dp))
             Box {
                 Button(onClick = { isOutputExpanded = !isOutputExpanded }) {
-                    Text(text = "Select")
+                    Text(text = outputUnit)
                     Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
                 }
                 DropdownMenu(
@@ -177,25 +181,45 @@ fun UnitConverter() {
                         text = {
                             Text(text = "Centimeter")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isOutputExpanded = false
+                            outputUnit = "Centimeter"
+                            outputConversionFactor = 0.01
+                            convertUnits()
+                        }
                     )
                     DropdownMenuItem(
                         text = {
                             Text(text = "Meters")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isOutputExpanded = false
+                            outputUnit = "Meter"
+                            outputConversionFactor = 1.0
+                            convertUnits()
+                        }
                     )
                     DropdownMenuItem(
                         text = {
                             Text(text = "Feet")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isOutputExpanded = false
+                            outputUnit = "Feet"
+                            outputConversionFactor = 0.3048
+                            convertUnits()
+                        }
                     )
                     DropdownMenuItem(
                         text = {
                             Text(text = "MilliMeters")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isOutputExpanded = false
+                            outputUnit = "Millimeter"
+                            outputConversionFactor = 0.001
+                            convertUnits()
+                        }
                     )
                 }
             }
