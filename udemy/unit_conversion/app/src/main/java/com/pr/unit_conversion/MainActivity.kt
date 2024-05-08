@@ -37,6 +37,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.pr.unit_conversion.ui.theme.Unit_conversionTheme
+import kotlin.math.roundToInt
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +72,11 @@ fun UnitConverter() {
         mutableStateOf(0.01)
     }
 
+    fun convertUnits() {
+        val inputValueDouble = inputValue.toDoubleOrNull() ?: 0.0
+        val result = (inputValueDouble * conversionFactor * 100.0).roundToInt() / 100.0
+        outputValue = result.toString()
+    }
 
     // UI 열 형태로 쌓기
     Column(
@@ -116,25 +122,41 @@ fun UnitConverter() {
                             isInputExpanded = false
                             inputUnit = "Centimeter"
                             conversionFactor = 0.01
+                            convertUnits()
                         }
                     )
                     DropdownMenuItem(
                         text = {
                             Text(text = "Meters")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isInputExpanded = false
+                            inputUnit = "Meter"
+                            conversionFactor = 1.0
+                            convertUnits()
+                        }
                     )
                     DropdownMenuItem(
                         text = {
                             Text(text = "Feet")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isInputExpanded = false
+                            inputUnit = "Feet"
+                            conversionFactor = 0.3048
+                            convertUnits()
+                        }
                     )
                     DropdownMenuItem(
                         text = {
                             Text(text = "MilliMeters")
                         },
-                        onClick = { /*TODO*/ }
+                        onClick = {
+                            isInputExpanded = false
+                            inputUnit = "Millimeter"
+                            conversionFactor = 0.001
+                            convertUnits()
+                        }
                     )
                 }
             }
