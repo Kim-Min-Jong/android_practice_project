@@ -26,6 +26,10 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.modifier.modifierLocalConsumer
@@ -46,6 +50,28 @@ class MainActivity : ComponentActivity() {
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun UnitConverter() {
+
+    // 버튼 및 드롭다운 클릭을 위한 상태 변수
+    var inputValue by remember { mutableStateOf("") }
+    var outputValue by remember { mutableStateOf("") }
+    var inputUnit by remember {
+        mutableStateOf("Centimeters")
+    }
+    var outputUnit by remember {
+        mutableStateOf("Meters")
+    }
+    var isInputExpanded by remember {
+        mutableStateOf(false)
+    }
+    var isOutputExpanded by remember {
+        mutableStateOf(false)
+    }
+    // 변환 승수
+    var conversionFactor by remember {
+        mutableStateOf(0.01)
+    }
+
+
     // UI 열 형태로 쌓기
     Column(
         // 요소 정렬
@@ -71,7 +97,7 @@ fun UnitConverter() {
                 }
                 DropdownMenu(
                     // 열려있는지? state를 잘 활용해야함
-                    expanded = false,
+                    expanded = isInputExpanded,
                     // 드롭다운이 닫히면 실행 될 콜백
                     onDismissRequest = { /*TODO*/ }
                 ) {
@@ -110,7 +136,7 @@ fun UnitConverter() {
                 }
                 DropdownMenu(
                     // 열려있는지? state를 잘 활용해야함
-                    expanded = false,
+                    expanded = isOutputExpanded,
                     // 드롭다운이 닫히면 실행 될 콜백
                     onDismissRequest = { /*TODO*/ }
                 ) {
