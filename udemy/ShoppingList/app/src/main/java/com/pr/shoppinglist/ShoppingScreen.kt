@@ -73,12 +73,36 @@ fun ShoppingListScreen() {
                 .fillMaxSize()
                 .padding(16.dp),
         ) {
-            items(items) {
-                ShoppingListItem(
-                    item = it,
-                    onEditClick = { },
-                    onDeleteClick = { }
-                )
+            items(items) { item ->
+                if (item.isEditing) {
+                    ShoppingItemEditor(
+                        item = item,
+                        onEditComplete = { name, quantity ->
+                            items =
+                                items.map { it.copy(isEditing = false) }
+                            val editedItem = items.find { it.id == item.id }
+                            editedItem?.let {
+                                it.name = name
+                                it.quantity = quantity
+                            }
+                        }
+                    )
+                } else {
+                    ShoppingListItem(
+                        item = item,
+                        onEditClick = {
+                           items = items.map {
+                               // 어떤 항목의 편집 버튼을 눌럿는지 나타냄
+                               it.copy(isEditing = it.id == item.id)
+                           }
+                        },
+                        onDeleteClick = {
+                            // 리스트에서 누른 것 제거
+                            items = items - item
+                        }
+                    )
+
+                }
             }
         }
     }
@@ -154,7 +178,8 @@ fun ShoppingListItem(
             .border(
                 border = BorderStroke(2.dp, Color.Cyan),
                 shape = RoundedCornerShape(20)
-            )
+            ),
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = item.name,
