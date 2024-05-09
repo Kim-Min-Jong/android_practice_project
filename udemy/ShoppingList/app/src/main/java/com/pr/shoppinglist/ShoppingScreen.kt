@@ -2,6 +2,7 @@ package com.pr.shoppinglist
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -68,7 +69,35 @@ fun ShoppingListScreen() {
     if (showDialog) {
         AlertDialog(
             onDismissRequest = { showDialog = false },
-            confirmButton = { /*TODO*/ },
+            confirmButton = {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Button(onClick = {
+                        // textfield를 확인하고 lazy column items에 추가
+                        if (itemName.isNotBlank()) {
+                            val newItem = ShoppingItem(
+                                id = items.size + 1,
+                                name = itemName,
+                                quantity = itemQuantity.toInt(),
+                            )
+                            items = items + newItem
+                            // 추가 후 변수 초기화
+                            showDialog = false
+                            itemName = ""
+                            itemQuantity = ""
+                        }
+                    }) {
+                        Text(text = "Add")
+                    }
+                    Button(onClick = { showDialog = false }) {
+                        Text(text = "Cancel")
+                    }
+                }
+            },
             title = { Text(text = "Add Shopping Item") },
             // alert dialog 의 main ui -- text
             text = {
