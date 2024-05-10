@@ -3,11 +3,19 @@ package com.pr.mvvm_counter
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 
-class CounterViewModel: ViewModel() {
-    private var _count = mutableStateOf(0)
+class CounterViewModel(
+    private val repository: CounterRepository
+) : ViewModel() {
+    private var _count = mutableStateOf(repository.getCounter().count)
     val count = _count
 
-    fun increment() = _count.value++
+    fun increment() {
+        repository.increment()
+        _count.value = repository.getCounter().count
+    }
 
-    fun decrement() = _count.value--
+    fun decrement() {
+        repository.decrement()
+        _count.value = repository.getCounter().count
+    }
 }

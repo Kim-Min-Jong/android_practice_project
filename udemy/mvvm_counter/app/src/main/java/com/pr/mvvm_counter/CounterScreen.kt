@@ -22,7 +22,7 @@ fun CounterApp(
         verticalArrangement = Arrangement.Center
     ) {
         Text(
-            text = "Count: ${viewModel.count.value}",
+            text = "Count: ${viewModel.count}",
             style = MaterialTheme.typography.titleLarge
         )
         Row(
