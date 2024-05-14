@@ -24,6 +24,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
 import com.pr.navigationsample.ui.theme.NavigationSampleTheme
 
 class MainActivity : ComponentActivity() {
@@ -43,3 +46,21 @@ class MainActivity : ComponentActivity() {
     }
 }
 
+@Composable
+fun MyApp() {
+    // 순서를 기억해줌 (백스택 기능 있음)
+    val navController = rememberNavController()
+
+    NavHost(navController =  navController, startDestination = "firstscreen") {
+        composable("firstscreen") {
+            FirstScreen {
+                navController.navigate("secondscreen")
+            }
+        }
+        composable("secondscreen") {
+            SecondScreen {
+                navController.navigate("firstscreen")
+            }
+        }
+    }
+}

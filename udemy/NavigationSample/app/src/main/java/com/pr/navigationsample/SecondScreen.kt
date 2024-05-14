@@ -20,7 +20,9 @@ import androidx.compose.ui.unit.sp
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SecondScreen() {
+fun SecondScreen(
+    navigateToFirstScreen: () -> Unit,
+) {
     val name = remember {
         mutableStateOf("")
     }
