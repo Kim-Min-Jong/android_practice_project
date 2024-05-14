@@ -21,11 +21,9 @@ import androidx.compose.ui.unit.sp
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SecondScreen(
-    navigateToFirstScreen: () -> Unit,
+    name: String,
+    navigateToFirstScreen: (String) -> Unit,
 ) {
-    val name = remember {
-        mutableStateOf("")
-    }
 
     Column(
         modifier = Modifier
@@ -37,9 +35,7 @@ fun SecondScreen(
         Text(text = "This is Second Screen" , fontSize = 24.sp)
         Text(text = "Welcome" , fontSize = 24.sp)
         Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(value =  name.value, onValueChange = { name.value = it })
-        Spacer(modifier = Modifier.height(16.dp))
-        Button(onClick = { /*TODO*/ }) {
+        Button(onClick = { navigateToFirstScreen(name) }) {
             Text(text = "Go to First Screen")
         }
     }
