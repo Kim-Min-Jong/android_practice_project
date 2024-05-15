@@ -1,6 +1,7 @@
 package com.pr.recipe_app
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
@@ -25,7 +26,8 @@ import com.pr.recipe_app.data.Category
 
 @Composable
 fun RecipeApp(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navigateToDetail: (Category) -> Unit
 ) {
     val recipeViewModel: MainViewModel = viewModel()
     val viewState by recipeViewModel.categoryState
@@ -49,7 +51,9 @@ fun RecipeApp(
 
             // 이외 로딩 성공
             else -> {
-                CategoryScreen(categories = viewState.list)
+                CategoryScreen(categories = viewState.list) {
+                    navigateToDetail
+                }
             }
         }
     }
@@ -59,14 +63,17 @@ fun RecipeApp(
 @Composable
 fun CategoryScreen(
     modifier: Modifier = Modifier,
-    categories: List<Category>
+    categories: List<Category>,
+    navigateToDetail: (Category) -> Unit
 ) {
     LazyVerticalGrid(
         modifier = modifier.fillMaxSize(),
         columns = GridCells.Fixed(2),
     ) {
         items(categories) {
-            CategoryItem(category = it)
+            CategoryItem(category = it) {
+                navigateToDetail
+            }
         }
     }
 }
@@ -75,13 +82,17 @@ fun CategoryScreen(
 @Composable
 fun CategoryItem(
     modifier: Modifier = Modifier,
-
-    category: Category
+    category: Category,
+    // 탐색 할 때 호출 될 람다
+    navigateToDetail: (Category) -> Unit
 ) {
     Column(
         modifier = modifier
             .padding(8.dp)
-            .fillMaxSize(),
+            .fillMaxSize()
+            .clickable {
+                navigateToDetail(category)
+            },
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         // image with coil
