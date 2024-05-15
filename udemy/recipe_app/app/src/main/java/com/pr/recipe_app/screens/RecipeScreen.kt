@@ -1,4 +1,4 @@
-package com.pr.recipe_app
+package com.pr.recipe_app.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -22,15 +22,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import coil.compose.rememberAsyncImagePainter
+import com.pr.recipe_app.MainViewModel
 import com.pr.recipe_app.data.Category
 
 @Composable
-fun RecipeApp(
+fun RecipeScreen(
     modifier: Modifier = Modifier,
+    viewState: MainViewModel.RecipeState,
     navigateToDetail: (Category) -> Unit
 ) {
     val recipeViewModel: MainViewModel = viewModel()
-    val viewState by recipeViewModel.categoryState
 
     Box(
         modifier = modifier.fillMaxSize()

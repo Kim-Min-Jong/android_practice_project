@@ -1,4 +1,4 @@
-package com.pr.recipe_app
+package com.pr.recipe_app.screens
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
