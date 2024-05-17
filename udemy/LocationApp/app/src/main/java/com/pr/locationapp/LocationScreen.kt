@@ -20,6 +20,7 @@ import com.pr.locationapp.util.LocationUtils
 @Composable
 fun LocationScreen(
     locationUtils: LocationUtils,
+    viewModel: LocationViewModel,
     context: Context,
     modifier: Modifier = Modifier
 ) {
@@ -72,6 +73,7 @@ fun LocationScreen(
         Button(onClick = {
             if (locationUtils.hasLocationPermission(context)) {
                 // 권한이 있다면 위치 업데이트
+
             } else {
                 // 권한 요청
                 requestPermissionLauncher.launch(
@@ -88,8 +90,10 @@ fun LocationScreen(
 
 
 @Composable
-fun MyApp() {
+fun MyApp(
+    viewModel: LocationViewModel
+) {
     val context = LocalContext.current
     val locationUtils = LocationUtils(context)
-    LocationScreen(locationUtils = locationUtils, context = context)
+    LocationScreen(locationUtils = locationUtils, context = context, viewModel = viewModel)
 }
