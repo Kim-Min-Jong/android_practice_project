@@ -24,6 +24,9 @@ fun LocationScreen(
     context: Context,
     modifier: Modifier = Modifier
 ) {
+    // 위치 가져오기
+    val location = viewModel.location.value
+
     // 런타임 권한 실행을 위한 런처
     val requestPermissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions(),
@@ -68,12 +71,18 @@ fun LocationScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-        Text(text = "Location not available")
+        // 위치 정보에 따른 텍스트 표기
+        if (location != null) {
+            Text(text = "Latitude: ${location.latitude}, Longitude: ${location.longitude}")
+        } else {
+            Text(text = "Location not available")
+        }
+
 
         Button(onClick = {
             if (locationUtils.hasLocationPermission(context)) {
                 // 권한이 있다면 위치 업데이트
-
+                locationUtils.requestLocationUpdates(viewModel = viewModel)
             } else {
                 // 권한 요청
                 requestPermissionLauncher.launch(
