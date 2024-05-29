@@ -6,7 +6,7 @@ data class LocationData(
 )
 
 data class GeocodingResponse(
-    val results: List<LocationData>,
+    val results: List<GeocodingResult>,
     val status: String
 )
 
