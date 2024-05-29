@@ -7,5 +7,5 @@ data class ShoppingItem(
     var quantity: Int,
     // 수정 중인지
     var isEditing: Boolean = false,
-    val address: String = ""
+    var address: String = ""
 )

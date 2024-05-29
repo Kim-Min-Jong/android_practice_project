@@ -133,6 +133,7 @@ fun ShoppingListScreen(
                             editedItem?.let {
                                 it.name = name
                                 it.quantity = quantity
+                                it.address = address
                             }
                         }
                     )
@@ -173,6 +174,7 @@ fun ShoppingListScreen(
                                 id = items.size + 1,
                                 name = itemName,
                                 quantity = itemQuantity.toInt(),
+                                address = address
                             )
                             items = items + newItem
                             // 추가 후 변수 초기화
