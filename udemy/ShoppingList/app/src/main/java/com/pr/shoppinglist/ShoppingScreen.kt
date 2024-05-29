@@ -1,6 +1,10 @@
 package com.pr.shoppinglist
 
+import android.Manifest
 import android.content.Context
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,6 +39,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.core.app.ActivityCompat
 import androidx.navigation.NavController
 import com.pr.shoppinglist.data.ShoppingItem
 import com.pr.shoppinglist.util.LocationUtils
@@ -63,7 +68,44 @@ fun ShoppingListScreen(
         mutableStateOf("")
     }
 
+    // 런타임 권한 실행을 위한 런처
+    val requestPermissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions(),
+        // 결과로 실행할 람다
+        onResult = { permission ->
+            // 권한을 다시 체크하고
+            if (permission[Manifest.permission.ACCESS_COARSE_LOCATION] == true &&
+                permission[Manifest.permission.ACCESS_FINE_LOCATION] == true
+            ) {
+                // 권한이 있으면 로직 실행
+            } else {
+                // rational permission
+                val rationaleRequired = ActivityCompat.shouldShowRequestPermissionRationale(
+                    context as MainActivity,
+                    Manifest.permission.ACCESS_FINE_LOCATION
+                ) || ActivityCompat.shouldShowRequestPermissionRationale(
+                    context,
+                    Manifest.permission.ACCESS_COARSE_LOCATION
+                )
 
+                if (rationaleRequired) {
+                    // 권한이 필요한 이유를 알려줌
+                    Toast.makeText(
+                        context,
+                        "Location Permission is required for this feature to work",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                } else {
+                    // 권한을 직접 설저하라고 알려줌
+                    Toast.makeText(
+                        context,
+                        "Location Permission is required, Please go to seting and on the permission",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+    )
 
     Column(
         modifier = Modifier.fillMaxSize(),
@@ -166,6 +208,24 @@ fun ShoppingListScreen(
                             .fillMaxWidth()
                             .padding(8.dp)
                     )
+                    // 지도를 띄울 버튼 (권한 확인)
+                    Button(onClick = {
+                        if (locationUtils.hasLocationPermission(context)) {
+                            locationUtils.requestLocationUpdates(viewModel)
+                            navController.navigate("locationscreen") {
+                                launchSingleTop = true
+                            }
+                        } else {
+                            requestPermissionLauncher.launch(
+                                arrayOf(
+                                    Manifest.permission.ACCESS_FINE_LOCATION,
+                                    Manifest.permission.ACCESS_COARSE_LOCATION
+                                )
+                            )
+                        }
+                    }) {
+
+                    }
                 }
             }
         )
