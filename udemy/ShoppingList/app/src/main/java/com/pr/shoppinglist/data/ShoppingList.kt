@@ -6,5 +6,6 @@ data class ShoppingItem(
     var name: String,
     var quantity: Int,
     // 수정 중인지
-    var isEditing: Boolean = false
+    var isEditing: Boolean = false,
+    val address: String = ""
 )
