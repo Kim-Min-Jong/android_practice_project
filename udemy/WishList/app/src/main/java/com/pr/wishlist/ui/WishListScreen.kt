@@ -24,6 +24,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
+import com.pr.wishlist.Screen
+import com.pr.wishlist.WishViewModel
 import com.pr.wishlist.data.DummyWish
 import com.pr.wishlist.data.Wish
 
@@ -31,7 +34,9 @@ import com.pr.wishlist.data.Wish
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeView(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    navController: NavController,
+    viewModel: WishViewModel
 ) {
     val context = LocalContext.current
 
@@ -48,7 +53,9 @@ fun HomeView(
                 modifier = modifier.padding(20.dp),
                 contentColor = Color.White,
                 containerColor = Color.Black,
-                onClick = { /* navigae to add screen*/ }
+                onClick = { /* navigae to add screen*/
+                    navController.navigate(Screen.AddScreen.route)
+                }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
             }
