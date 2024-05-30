@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -18,8 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
 import com.pr.wishlist.R
 import com.pr.wishlist.WishViewModel
@@ -41,17 +44,47 @@ fun AddEditDetailView(
                 else stringResource(R.string.add_wish)
             )
         }
-    ) {
+    ) { paddingValues ->
         Column(
             modifier = modifier
-                .padding(it)
+                .padding(paddingValues)
                 .wrapContentSize(),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center
         ) {
             Spacer(modifier = modifier.height(10.dp))
 
+            // 입력 커스텀 필드
+            WishTextFiled(
+                label = "Title",
+                value = viewModel.wishTitleState,
+                onValueChanged = {
+                    viewModel.onWishTitleChanged(it)
+                }
+            )
+            WishTextFiled(
+                label = "Description",
+                value = viewModel.wishDescriptionState,
+                onValueChanged = {
+                    viewModel.onWishDescriptionChanged(it)
+                }
+            )
 
+            Spacer(modifier = modifier.height(10.dp))
+            Button(onClick = {
+                // 입력된 값이 있을 때만 업데이트 하기
+                if (viewModel.wishTitleState.isNotEmpty() && viewModel.wishDescriptionState.isNotEmpty()) {
+                    // update wish func
+                } else {
+                    // add wish
+                }
+            }) {
+                Text(
+                    text = if (id != 0L) stringResource(R.string.update_wish)
+                    else stringResource(R.string.add_wish),
+                    style = TextStyle(fontSize = 18.sp)
+                )
+            }
         }
     }
 }
