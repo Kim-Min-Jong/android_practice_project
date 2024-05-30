@@ -29,12 +29,16 @@ fun AppBarView(
 ) {
     // 표시 유무를 위해 변수로 분리
     val navigationIcon: (@Composable () -> Unit) = {
-        IconButton(onClick = onBackNavClicked) {
-            Icon(
-                imageVector = Icons.Filled.ArrowBack,
-                contentDescription = null,
-                tint = Color.White
-            )
+        if (!title.contains("WishList")) {
+            IconButton(onClick = onBackNavClicked) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = null,
+                    tint = Color.White
+                )
+            }
+        } else {
+            Unit
         }
     }
 
