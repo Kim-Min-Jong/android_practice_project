@@ -42,7 +42,10 @@ fun AddEditDetailView(
                 title = // 아이디에 따른 텍스트 변경
                 if (id != 0L) stringResource(R.string.update_wish)
                 else stringResource(R.string.add_wish)
-            )
+            ) {
+                // 이전으로 이동 (뒤로가기)
+                navController.navigateUp()
+            }
         }
     ) { paddingValues ->
         Column(
