@@ -53,6 +53,16 @@ android {
 }
 
 dependencies {
+    val nav_version = "2.7.5"
+    val compose_version = "1.6.0-alpha08"
+    val room = "2.6.0"
+
+    // room
+    implementation("androidx.room:room-runtime:$room")
+    implementation("androidx.room:room-ktx:$room")
+    kapt("androidx.room:room-compiler:$room")
+    // compose
+    implementation("androidx.navigation:navigation-compose:$nav_version")
 
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.0")
@@ -70,14 +80,5 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
 
-    val nav_version = "2.7.5"
-    val compose_version = "1.6.0-alpha08"
-    val room = "2.6.0"
 
-    // room
-    implementation("androidx.room:room-runtime$room")
-    implementation("androidx.room:room-ktx$room")
-    kapt("androidx.room:room-complier$room")
-    // compose
-    implementation("androidx.navigation:navigation-compose:$nav_version")
 }
