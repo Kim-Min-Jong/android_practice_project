@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class WishViewModel(
-    private val wishRepository: WishRepository
+    private val wishRepository: WishRepository = Graph.wishRepository
 ): ViewModel() {
 
     // 입력 텍스트의 상태를 나타낼 변수
