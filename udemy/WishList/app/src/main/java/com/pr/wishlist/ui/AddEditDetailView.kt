@@ -107,7 +107,13 @@ fun AddEditDetailView(
                     // add wish func
                     if (id != 0L) {
                         // update wish
-
+                        viewModel.updateWish(
+                            Wish(
+                                id = id,
+                                title = viewModel.wishTitleState.trim(),
+                                description = viewModel.wishDescriptionState.trim()
+                            )
+                        )
                     } else {
                         // add wish
                         viewModel.addWish(
