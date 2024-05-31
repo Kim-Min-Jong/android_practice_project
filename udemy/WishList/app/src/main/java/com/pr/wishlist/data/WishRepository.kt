@@ -10,7 +10,7 @@ class WishRepository(
 
     suspend fun getWish(): Flow<List<Wish>> = wishDao.getAllWishes()
 
-    suspend fun getWishById(id: Long): Flow<Wish> = wishDao.getWishById(id)
+    fun getWishById(id: Long): Flow<Wish> = wishDao.getWishById(id)
 
     suspend fun updateWish(wish: Wish) = wishDao.updateWish(wish)
 
