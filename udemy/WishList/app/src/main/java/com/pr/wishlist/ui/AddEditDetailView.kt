@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -49,6 +50,16 @@ fun AddEditDetailView(
 
     // state
     val snackbarHostState = remember { SnackbarHostState() }
+    // 리컴포지션시 update wish를 다시 가져옴
+    // id가 0이 아니라면(아무것도없는 상태) 가져온 값을 반영
+    if (id != 0L) {
+        val wish = viewModel.getWishById(id).collectAsState(initial = Wish(0L))
+        viewModel.wishTitleState = wish.value.title
+        viewModel.wishDescriptionState = wish.value.description
+    } else {
+        viewModel.wishTitleState = ""
+        viewModel.wishDescriptionState = ""
+    }
     Scaffold(
         // 탑바 재사용
         topBar = {
@@ -62,7 +73,7 @@ fun AddEditDetailView(
             }
         },
         // 스낵바의 state를 등록
-        snackbarHost = { SnackbarHost(snackbarHostState)}
+        snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { paddingValues ->
         Column(
             modifier = modifier
@@ -108,7 +119,7 @@ fun AddEditDetailView(
                         snackMessage = "adding complete"
                     }
                 } else {
-                   snackMessage = "Enter fileds to create a wish"
+                    snackMessage = "Enter fileds to create a wish"
                 }
                 // 저장 or 업데이트가 끝나면 이전 페이지로 자동 이동하도록
                 scope.launch {

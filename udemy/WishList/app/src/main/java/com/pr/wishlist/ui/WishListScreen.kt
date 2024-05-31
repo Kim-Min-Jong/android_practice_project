@@ -55,7 +55,7 @@ fun HomeView(
                 contentColor = Color.White,
                 containerColor = Color.Black,
                 onClick = { /* navigae to add screen*/
-                    navController.navigate(Screen.AddScreen.route)
+                    navController.navigate(Screen.AddScreen.route + "/0L")
                 }
             ) {
                 Icon(imageVector = Icons.Default.Add, contentDescription = null)
@@ -72,7 +72,9 @@ fun HomeView(
         ) {
             items(wishList.value) { wish ->
                 WishItem(wish = wish) {
-                    
+                    val id = wish.id
+                    // 특정 아이디의 detail view로 이동
+                    navController.navigate(Screen.AddScreen.route + "/$id")
                 }
             }
         }
