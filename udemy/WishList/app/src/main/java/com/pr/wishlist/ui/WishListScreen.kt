@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -61,12 +62,15 @@ fun HomeView(
             }
         }
     ) {
+        // collectAsState로 데이터 감지하고 flow에서 state로 변환
+        val wishList = viewModel.getAllWishes.collectAsState(initial = emptyList())
+
         LazyColumn(
             modifier = modifier
                 .fillMaxSize()
                 .padding(it)
         ) {
-            items(DummyWish.wishList) { wish ->
+            items(wishList.value) { wish ->
                 WishItem(wish = wish) {
                     
                 }
