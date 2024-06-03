@@ -1,4 +1,4 @@
-package com.pr.menusandnav
+package com.pr.menusandnav.screens
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column

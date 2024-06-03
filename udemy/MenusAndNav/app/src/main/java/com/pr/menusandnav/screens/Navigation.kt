@@ -1,4 +1,4 @@
-package com.pr.menusandnav
+package com.pr.menusandnav.screens
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
@@ -9,6 +9,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.dialog
+import com.pr.menusandnav.MainViewModel
 
 
 @Composable

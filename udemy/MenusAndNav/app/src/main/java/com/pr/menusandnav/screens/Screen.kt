@@ -1,6 +1,7 @@
-package com.pr.menusandnav
+package com.pr.menusandnav.screens
 
 import androidx.annotation.DrawableRes
+import com.pr.menusandnav.R
 
 // Drawer Click을 통해 이동할 화면들을 미리 정의
 sealed class Screen(
