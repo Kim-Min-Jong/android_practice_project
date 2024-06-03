@@ -8,7 +8,6 @@ import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.dialog
 import com.pr.menusandnav.MainViewModel
 
 
@@ -21,18 +20,15 @@ fun Navigation(
 ) {
     NavHost(
         navController = navController as NavHostController,
-        startDestination = Screen.DrawerScreen.AddAcoount.route,
+        startDestination = Screen.DrawerScreen.Account.route,
         modifier = modifier.padding(paddingValues)
     ) {
-        composable(Screen.DrawerScreen.AddAcoount.route) {
-
-        }
 
         composable(Screen.DrawerScreen.Account.route) {
-
+            AccountScreen()
         }
 
-        dialog(Screen.DrawerScreen.Subscription.route) {
+        composable(Screen.DrawerScreen.Subscription.route) {
 
         }
     }
