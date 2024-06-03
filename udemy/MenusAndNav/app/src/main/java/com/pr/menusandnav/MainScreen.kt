@@ -29,6 +29,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import kotlinx.coroutines.launch
@@ -53,6 +54,14 @@ fun MainScreen(
 
     // 상단바 제목 유지 변수
     var title by remember { mutableStateOf("Home") }
+
+    // 뷰모델 선언
+    val viewModel: MainViewModel = viewModel()
+    // 현재 화면위치를 위한 변수
+    val currentScreen by remember {
+        viewModel.currentScreen
+    }
+
     ModalNavigationDrawer(
         drawerState = scaffoldState,
         drawerContent = {
@@ -87,13 +96,20 @@ fun MainScreen(
                                 scaffoldState.open()
                             }
                         }) {
-                            Icon(imageVector = Icons.Default.AccountCircle, contentDescription = null)
+                            Icon(
+                                imageVector = Icons.Default.AccountCircle,
+                                contentDescription = null
+                            )
                         }
                     },
                 )
             },
         ) { paddingValues ->
-            Text(text = "text", modifier = modifier.padding(paddingValues))
+            Navigation(
+                navController = controller,
+                viewModel = viewModel,
+                paddingValues = paddingValues
+            )
         }
     }
 }
