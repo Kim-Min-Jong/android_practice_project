@@ -62,6 +62,9 @@ fun MainScreen(
         viewModel.currentScreen
     }
 
+    // 다이얼로그를 열지 말지에 대한 변수
+    val dialogOpen = remember { mutableStateOf(false) }
+
     ModalNavigationDrawer(
         drawerState = scaffoldState,
         drawerContent = {
@@ -75,6 +78,7 @@ fun MainScreen(
                         }
                         if (item.dRoute == "add_account") {
                             // 추가 다이얼로그 열기
+                            dialogOpen.value = true
                         } else {
                             controller.navigate(item.route)
                             title = item.dTitle
@@ -110,6 +114,8 @@ fun MainScreen(
                 viewModel = viewModel,
                 paddingValues = paddingValues
             )
+
+            AccountDialog(dialogOpen = dialogOpen)
         }
     }
 }
@@ -129,7 +135,7 @@ fun DrawerItem(
     val backgroundColor = if (selected) Color.DarkGray else Color.White
     Row(
         modifier = modifier
-            .fillMaxWidth()
+//            .fillMaxWidth()
             .padding(horizontal = 8.dp, vertical = 16.dp)
             .background(backgroundColor)
             .clickable {
