@@ -25,8 +25,8 @@ sealed class Screen(
             R.drawable.ic_music_library
         )
         object Browse: BottomScreen(
-            "Home",
-            "home",
+            "Browse",
+            "browse",
             R.drawable.ic_browse
         )
 

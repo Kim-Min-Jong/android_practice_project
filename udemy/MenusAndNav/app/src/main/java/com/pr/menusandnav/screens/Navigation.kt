@@ -34,7 +34,7 @@ fun Navigation(
 
         // Bottom Nav
         composable(Screen.BottomScreen.Home.route) {
-
+            Home()
         }
 
         composable(Screen.BottomScreen.Library.route) {
