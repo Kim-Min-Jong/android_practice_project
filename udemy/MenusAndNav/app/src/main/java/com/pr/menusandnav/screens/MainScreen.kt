@@ -91,6 +91,7 @@ fun MainScreen(
                         onClick = {
                             // navController를 통한 탐색
                             controller.navigate(item.bRoute)
+                            title = item.bTitle
                         },
                         icon = {
                             Icon(
