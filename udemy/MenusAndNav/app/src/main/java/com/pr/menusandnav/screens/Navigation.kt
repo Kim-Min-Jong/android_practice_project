@@ -23,7 +23,7 @@ fun Navigation(
         startDestination = Screen.DrawerScreen.Account.route,
         modifier = modifier.padding(paddingValues)
     ) {
-
+        // Drawer
         composable(Screen.DrawerScreen.Account.route) {
             AccountScreen()
         }
@@ -31,5 +31,19 @@ fun Navigation(
         composable(Screen.DrawerScreen.Subscription.route) {
             SubscribeScreen()
         }
+
+        // Bottom Nav
+        composable(Screen.BottomScreen.Home.route) {
+
+        }
+
+        composable(Screen.BottomScreen.Library.route) {
+
+        }
+
+        composable(Screen.BottomScreen.Browse.route) {
+
+        }
+
     }
 }
