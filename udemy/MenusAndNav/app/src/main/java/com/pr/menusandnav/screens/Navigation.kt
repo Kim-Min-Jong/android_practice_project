@@ -42,8 +42,7 @@ fun Navigation(
         }
 
         composable(Screen.BottomScreen.Browse.route) {
-
+            LibraryScreen()
         }
-
     }
 }
