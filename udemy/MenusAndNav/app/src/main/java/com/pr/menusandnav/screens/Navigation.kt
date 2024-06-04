@@ -34,11 +34,11 @@ fun Navigation(
 
         // Bottom Nav
         composable(Screen.BottomScreen.Home.route) {
-            Home()
+            HomeScreen()
         }
 
         composable(Screen.BottomScreen.Library.route) {
-
+            BrowseScreen()
         }
 
         composable(Screen.BottomScreen.Browse.route) {

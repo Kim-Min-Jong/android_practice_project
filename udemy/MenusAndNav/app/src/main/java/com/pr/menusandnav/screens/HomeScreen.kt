@@ -22,7 +22,7 @@ import com.pr.menusandnav.R
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun Home(
+fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     // 보여 줄 더미데이터 나열
