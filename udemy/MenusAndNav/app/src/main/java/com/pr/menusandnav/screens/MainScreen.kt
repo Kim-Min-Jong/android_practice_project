@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -14,6 +15,8 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationBar
+import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -65,6 +68,33 @@ fun MainScreen(
     // 다이얼로그를 열지 말지에 대한 변수
     val dialogOpen = remember { mutableStateOf(false) }
 
+    // 바텀 바 컴포저블
+    val bottomBar: @Composable () -> Unit = {
+        if (currentScreen is Screen.DrawerScreen || currentScreen == Screen.BottomScreen.Home) {
+            NavigationBar(
+                modifier = modifier.wrapContentSize()
+            ) {
+                screensInBottom.forEach { item ->
+                    NavigationBarItem(
+                        selected = currentRoute == item.bRoute,
+                        onClick = {
+                            // navController를 통한 탐색
+                            controller.navigate(item.bRoute)
+                        },
+                        icon = {
+                            Icon(
+                                painter = painterResource(id = item.icon),
+                                contentDescription = null
+                            )
+                        },
+                        label = { Text(text = item.bTitle) },
+                    )
+                }
+            }
+
+        }
+    }
+
     ModalNavigationDrawer(
         drawerState = scaffoldState,
         drawerContent = {
@@ -89,6 +119,8 @@ fun MainScreen(
         }) {
         // mainContent
         Scaffold(
+            // 하단 바
+            bottomBar = bottomBar,
             // 상단바
             topBar = {
                 TopAppBar(
