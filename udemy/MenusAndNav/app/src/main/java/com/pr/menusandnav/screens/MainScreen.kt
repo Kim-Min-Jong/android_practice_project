@@ -13,6 +13,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material.icons.filled.MoreVert
@@ -21,6 +22,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
@@ -116,6 +118,8 @@ fun MainScreen(
         confirmValueChange = { it != SheetValue.PartiallyExpanded }
     )
     val roundedCornerRadius = if (isSheetFullScreen) 0.dp else 12.dp
+    // 펼칠지 말지
+    var openBottomSheet by remember { mutableStateOf(false) }
 
     ModalNavigationDrawer(
         drawerState = scaffoldState,
@@ -153,9 +157,11 @@ fun MainScreen(
                         IconButton(onClick = {
                             scope.launch {
                                 if (modalSheetState.isVisible) {
-                                    modalSheetState.show()
-                                } else {
+                                    openBottomSheet = false
                                     modalSheetState.hide()
+                                } else {
+                                    openBottomSheet = true
+                                    modalSheetState.show()
                                 }
                             }
                         }) {
@@ -187,13 +193,16 @@ fun MainScreen(
             AccountDialog(dialogOpen = dialogOpen)
         }
     }
-//    ModalBottomSheet(
-//        onDismissRequest = {  },
-//        sheetState = modalSheetState,
-//        shape = RoundedCornerShape(topStart = roundedCornerRadius, topEnd = roundedCornerRadius)
-//    ) {
-//        MoreBottomSheet(modifier)
-//    }
+    if (openBottomSheet) {
+        ModalBottomSheet(
+            onDismissRequest = { openBottomSheet = false },
+            sheetState = modalSheetState,
+            shape = RoundedCornerShape(topStart = roundedCornerRadius, topEnd = roundedCornerRadius)
+        ) {
+            MoreBottomSheet(modifier)
+        }
+    }
+
 }
 
 @Composable
