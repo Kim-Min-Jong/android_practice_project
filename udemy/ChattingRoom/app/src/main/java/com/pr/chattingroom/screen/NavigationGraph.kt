@@ -24,7 +24,9 @@ fun NavigationGraph(
         }
         composable(Screen.LoginScreen.route) {
             LoginScreen(
-                onNavigateToSignUp = { navController.navigate(Screen.SignUpScreen.route) }
+                onNavigateToSignUp = { navController.navigate(Screen.SignUpScreen.route) },
+                authViewModel = authViewModel,
+                onSignInSuccess = { navController.navigate(Screen.ChatRoomScreen.route) }
             )
         }
     }
