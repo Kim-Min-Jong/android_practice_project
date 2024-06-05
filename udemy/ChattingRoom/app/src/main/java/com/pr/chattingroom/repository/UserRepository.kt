@@ -38,4 +38,17 @@ class UserRepository(
             .set(user)
             .await()
     }
+
+    // 로그인 메소드
+    suspend fun login(
+        email: String,
+        password: String
+    ): Result<Boolean> {
+        return try {
+            auth.signInWithEmailAndPassword(email, password).await()
+            Result.Success(true)
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }
