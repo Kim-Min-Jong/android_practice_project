@@ -13,8 +13,6 @@ firebaseBom = "32.6.0"
 navigationCompose = "2.7.5"
 viewmodel-compose = "2.6.2"
 compose-livedata = "1.5.2"
-navigationRuntimeKtx = "2.7.7"
-navigationComposeVersion = "2.7.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -32,14 +30,14 @@ androidx-ui-test-manifest = { group = "androidx.compose.ui", name = "ui-test-man
 androidx-ui-test-junit4 = { group = "androidx.compose.ui", name = "ui-test-junit4" }
 androidx-material3 = { group = "androidx.compose.material3", name = "material3" }
 #firebase
-firebase-auth = { group = "com.google.firebase:firebase-auth", name = "firebase-auth", version.ref = "firebaseBom" }
-firebase-firestore = { group = "com.google.firebase:firebase-firestore", name = "firebase-firestore", version.ref = "firebaseBom" }
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 # navigation, viewmodel
-navigation-compose = { group = "androidx.navigation:navigation-compose", name = "navigation-compose", version.ref = "navigationCompose"}
-viewmodel-compose = {group="androix.lifecycle:lifecycle-viewmodel-compose", name = "lifecycle-viewmodel-compose", version.ref = "viewmodel-compose"}
-runtime-livedata = {group="androidx.compose.runtime:runtime-livedata:1.5.2", name="runtime-livedata", version.ref = "compose-livedata"}
-androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
-androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationComposeVersion" }
+navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationCompose" }
+viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "viewmodel-compose" }
+runtime-livedata = { group = "androidx.compose.runtime", name = "runtime-livedata", version.ref = "compose-livedata" }
+
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
