@@ -13,6 +13,8 @@ firebaseBom = "32.6.0"
 navigationCompose = "2.7.5"
 viewmodel-compose = "2.6.2"
 compose-livedata = "1.5.2"
+navigationRuntimeKtx = "2.7.7"
+navigationComposeVersion = "2.7.7"
 
 [libraries]
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "coreKtx" }
@@ -36,6 +38,8 @@ firebase-firestore = { group = "com.google.firebase:firebase-firestore", name = 
 navigation-compose = { group = "androidx.navigation:navigation-compose", name = "navigation-compose", version.ref = "navigationCompose"}
 viewmodel-compose = {group="androix.lifecycle:lifecycle-viewmodel-compose", name = "lifecycle-viewmodel-compose", version.ref = "viewmodel-compose"}
 runtime-livedata = {group="androidx.compose.runtime:runtime-livedata:1.5.2", name="runtime-livedata", version.ref = "compose-livedata"}
+androidx-navigation-runtime-ktx = { group = "androidx.navigation", name = "navigation-runtime-ktx", version.ref = "navigationRuntimeKtx" }
+androidx-navigation-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "navigationComposeVersion" }
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
 jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }

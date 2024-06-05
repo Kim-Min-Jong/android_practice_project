@@ -23,7 +23,9 @@ import androidx.compose.ui.unit.dp
 
 @Composable
 fun LoginScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    // 회원가입 화면으로 이동을 위한 탐색 변수
+    onNavigateToSignUp: () -> Unit
 ) {
     var email by remember {
         mutableStateOf("")
@@ -69,7 +71,9 @@ fun LoginScreen(
         Spacer(modifier = modifier.height(16.dp))
         Text(
             text = "Don't have an account? Sign up.",
-            modifier = modifier.clickable {}
+            modifier = modifier.clickable {
+                onNavigateToSignUp()
+            }
         )
     }
 }
