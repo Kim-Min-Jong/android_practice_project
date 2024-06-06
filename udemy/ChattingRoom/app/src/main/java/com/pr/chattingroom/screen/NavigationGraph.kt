@@ -29,5 +29,8 @@ fun NavigationGraph(
                 onSignInSuccess = { navController.navigate(Screen.ChatRoomScreen.route) }
             )
         }
+        composable(Screen.ChatRoomScreen.route) {
+            ChatRoomScreen()
+        }
     }
 }

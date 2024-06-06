@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
@@ -19,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -28,18 +30,23 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.pr.chattingroom.RoomViewModel
 import com.pr.chattingroom.data.Room
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ChatRoomScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    roomViewModel: RoomViewModel = viewModel()
 ) {
 
     // 대화 다이얼로그를 보여줄지 말지하는 상태
     var showDialog by remember { mutableStateOf(false) }
     // 채팅방 이름 상태
     var name by remember { mutableStateOf("") }
+    // 방 상태 옵저빙 (처음은 빈 상태)
+    val rooms by roomViewModel.room.observeAsState(emptyList())
 
     Column(
         modifier = modifier
@@ -54,7 +61,9 @@ fun ChatRoomScreen(
 
         // 채팅방 목록
         LazyColumn {
-
+            items(rooms) {
+                RoomItem(room = it)
+            }
         }
         Spacer(modifier = modifier.height(16.dp))
         // 새 방을 만드는 버튼
