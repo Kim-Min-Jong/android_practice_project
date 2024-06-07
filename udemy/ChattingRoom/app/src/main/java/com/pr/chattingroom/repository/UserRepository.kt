@@ -51,4 +51,19 @@ class UserRepository(
             Result.Error(e)
         }
     }
+
+    fun getCurrentUser(): Result<User> {
+        return try {
+            val firebaseUser = auth.currentUser
+            Result.Success(
+                User(
+                    firstName = firebaseUser?.displayName.toString(),
+                    lastName = firebaseUser?.uid.toString(),
+                    email = firebaseUser?.email.toString()
+                )
+            )
+        } catch (e: Exception) {
+            Result.Error(e)
+        }
+    }
 }

@@ -19,6 +19,7 @@ class MessageRepository (
     ) = try {
         firestore.collection("rooms").document(roomId)
             .collection("messages").add(message).await()
+        Result.Success(Unit)
     } catch (e: Exception) {
         Result.Error(e)
     }
