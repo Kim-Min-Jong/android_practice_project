@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.material.icons.Icons
@@ -21,6 +22,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -31,16 +33,24 @@ import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.pr.chattingroom.MessageViewModel
 import com.pr.chattingroom.R
 import com.pr.chattingroom.data.Message
 import com.pr.chattingroom.util.formatTimeStamp
 
 @Composable
 fun ChatScreen(
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    roomId: String,
+    messageViewModel: MessageViewModel
 ) {
     // 작성한 텍스트 상태
     var text by remember { mutableStateOf("") }
+
+    // 이전 작성된 메세지들
+    val messages by messageViewModel.messages.observeAsState(emptyList())
+    // 채팅방을 세팅
+    messageViewModel.setRoomId(roomId)
 
     // 채팅 창 UI
     Column(
@@ -52,7 +62,14 @@ fun ChatScreen(
         LazyColumn(
             modifier = modifier.weight(1f)
         ) {
-            // TODO
+            items(messages) { message ->
+                // id는 사용자가 채팅룸에 참여하려고 클릭하는 시점에서 목록 화면에서 가져옴
+                ChatMessageItem(
+                    message = message.copy(
+                        isSentByCurrentUser = message.senderId == messageViewModel.currentUser.value?.email
+                    )
+                )
+            }
         }
 
         // 챗 입력 및 버튼
@@ -74,9 +91,11 @@ fun ChatScreen(
                 onClick = {
                     // 버튼 클릭 시 메세지 전송
                     if (text.isNotEmpty()) {
-                        // TODO
+                        messageViewModel.sendMessage(text.trim())
                         text = ""
                     }
+                    // 전송 후 다시 로드
+                    messageViewModel.loadMessages()
                 }
             ) {
                 Icon(imageVector = Icons.Default.Send, contentDescription = "Send")
