@@ -30,7 +30,10 @@ fun NavigationGraph(
             )
         }
         composable(Screen.ChatRoomScreen.route) {
-            ChatRoomScreen()
+            // 특정 채팅방으로 이동
+            ChatRoomScreen {
+                navController.navigate("${Screen.ChatScreen.route}/${it.id}")
+            }
         }
     }
 }
