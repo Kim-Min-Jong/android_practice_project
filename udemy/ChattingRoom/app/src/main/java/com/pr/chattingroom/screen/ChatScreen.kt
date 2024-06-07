@@ -87,7 +87,7 @@ fun ChatScreen(
 
 // 각 채팅을 보여줄 컴포저블
 @RequiresApi(Build.VERSION_CODES.O)
-@@Composable
+@Composable
 fun ChatMessageItem(
     modifier: Modifier = Modifier,
     message: Message

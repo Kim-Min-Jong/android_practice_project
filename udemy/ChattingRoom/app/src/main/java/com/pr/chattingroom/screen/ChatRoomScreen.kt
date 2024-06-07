@@ -38,7 +38,8 @@ import com.pr.chattingroom.data.Room
 @Composable
 fun ChatRoomScreen(
     modifier: Modifier = Modifier,
-    roomViewModel: RoomViewModel = viewModel()
+    roomViewModel: RoomViewModel = viewModel(),
+    onJoinClicked: (Room) -> Unit
 ) {
 
     // 대화 다이얼로그를 보여줄지 말지하는 상태
@@ -62,7 +63,7 @@ fun ChatRoomScreen(
         // 채팅방 목록
         LazyColumn {
             items(rooms) {
-                RoomItem(room = it)
+                RoomItem(room = it, onJoinClicked = { onJoinClicked(it) })
             }
         }
         Spacer(modifier = modifier.height(16.dp))
@@ -130,7 +131,9 @@ fun ChatRoomScreen(
 
 @Composable
 fun RoomItem(
-    room: Room
+    room: Room,
+    // 채팅방에 들어가는 콜백
+    onJoinClicked: (Room) -> Unit
 ) {
     Row(
         modifier = Modifier
@@ -144,7 +147,7 @@ fun RoomItem(
             fontWeight = FontWeight.Normal
         )
         OutlinedButton(
-            onClick = { }
+            onClick = { onJoinClicked(room) }
         ) {
             Text("Join")
         }
