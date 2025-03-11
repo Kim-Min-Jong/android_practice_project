@@ -1,6 +1,8 @@
 package com.pr.service_pr
 
 import android.content.Intent
+import android.os.Build
+import android.os.Build.VERSION_CODES
 import android.os.Bundle
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -26,6 +28,22 @@ class MainActivity : AppCompatActivity() {
 
         binding.stopService.setOnClickListener {
             stopBasicService()
+        }
+
+        binding.startForegroundService.setOnClickListener {
+            startForegroundService()
+        }
+    }
+
+    private fun startForegroundService() {
+        Intent(this, MyForegroundService::class.java).run {
+            // foreground service 정책생 api 26 이상일 떈 아래 메소드를 호출
+            // 아니면 일반 실행 함수 호출
+            if (Build.VERSION.SDK_INT > VERSION_CODES.O) {
+                startForegroundService(this)
+            } else {
+                startService(this)
+            }
         }
     }
 
