@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
-
+    <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 
     <application
@@ -17,9 +16,13 @@
         android:theme="@style/Theme.Servicepr"
         tools:targetApi="31">
         <service
+            android:name=".MyBinderService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
             android:name=".MyForegroundService"
             android:enabled="true"
-            android:exported="true"/>
+            android:exported="true" />
         <service
             android:name=".Service"
             android:enabled="true"
