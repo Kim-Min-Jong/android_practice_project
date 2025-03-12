@@ -6,9 +6,14 @@ import android.content.ServiceConnection
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
+import android.os.Message
+import android.os.Messenger
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.os.bundleOf
 import com.pr.service_pr.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
@@ -29,6 +34,48 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
+
+    private val messengerIPCHandler = object : Handler(Looper.getMainLooper()){
+        override fun handleMessage(msg: Message) {
+            when (msg.what){
+                MyMessengerIPCService.MSG_ADD_RESPONSE -> {
+                    showSimpleToast("Add response: ${msg.arg1}")
+                }
+                else -> super.handleMessage(msg)
+            }
+        }
+    }
+
+    // 클라이언트 측 Messenger
+    private val messengerIPCClient = Messenger(messengerIPCHandler)
+    // 서비스 측 Messenger
+    private var messengerIPCService: Messenger? = null
+    // 위 둘을 연결하기 위한 서비스 커넥션
+    private val messengerIPCServiceConnection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            // 서비스측 메신저를 만들고
+            messengerIPCService = Messenger(p1).apply {
+                // 메세지를 보냄
+                send(Message.obtain(
+                    null,
+                    MyMessengerIPCService.MSG_BIND_CLIENT,
+                    0,
+                    0
+                ).apply {
+                    // 메세지는 클라이언트 측 메신저 (메세지 포함)
+                    replyTo = messengerIPCClient
+                })
+            }
+            showSimpleToast("MessengerIPCService - onServiceConnected")
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            messengerIPCService = null
+            showSimpleToast("MessengerIPCService - onServiceDisconnected")
+        }
+
+    }
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -69,8 +116,68 @@ class MainActivity : AppCompatActivity() {
                 println("Service is unbounded")
             }
         }
+
+        // bind messenger
+        binding.bindMessenger.setOnClickListener {
+            bindMessengerService()
+        }
+        binding.unbindMessenger.setOnClickListener {
+            unbindMessengerService()
+        }
+        binding.showToastMessenger.setOnClickListener {
+            showMessengerIPCServiceToast()
+        }
+        binding.invokeFunctionMessenger.setOnClickListener {
+            invokeAddMessengerIPCService()
+        }
     }
 
+    private fun bindMessengerService() {
+        // 서비스 커넥션을 통해 서비스를 bind
+        Intent(this, MyMessengerIPCService::class.java).run {
+            bindService(this, messengerIPCServiceConnection, android.app.Service.BIND_AUTO_CREATE)
+        }
+    }
+
+    private fun unbindMessengerService() {
+        // 서비스에 unbind 신호를 보낸후
+        messengerIPCService?.send(
+            Message.obtain(
+                null,
+                MyMessengerIPCService.MSG_UNBIND_CLIENT,
+                0
+                ,0
+            ).apply {
+                replyTo = messengerIPCClient
+            }
+        )
+        // 서비스를 해제
+        unbindService(messengerIPCServiceConnection)
+    }
+
+    // toast를 띄우기 위해 서비스에 메세지를 전송
+    private fun showMessengerIPCServiceToast() {
+        // 서비스에 객체를 보냄
+        messengerIPCService?.send(
+            // 메세지를
+            Message.obtain(
+                null,
+                // 플래그를 보고 서비스 핸들러에서 분기 처리
+                MyMessengerIPCService.MSG_SHOW_TOAST,
+                0
+                ,0
+            ).apply {
+                // 이런 데이터를 포함해서
+                data = bundleOf(MyMessengerIPCService.MSG_TOAST_TEXT to "Messenger IPC Service!")
+            }
+        )
+    }
+
+    // 서비스의 함수 호출
+    private fun invokeAddMessengerIPCService() {
+        messengerIPCService?.send(Message.obtain(null, MyMessengerIPCService.MSG_ADD_REQUEST, 5, 1))
+    }
+// ----------------------------------------
     private fun bindBinderService() {
         // 인텐트를 통해 서비스를 연결하고
         Intent(this, MyBinderService::class.java).run {
@@ -82,6 +189,7 @@ class MainActivity : AppCompatActivity() {
         unbindService(bindServiceConnection)
     }
 
+// ----------------------------------------
 
     private fun startForegroundService() {
         Intent(this, MyForegroundService::class.java).run {
