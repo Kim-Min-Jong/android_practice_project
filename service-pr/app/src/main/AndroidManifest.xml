@@ -15,12 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Servicepr"
         tools:targetApi="31">
+        <service
+            android:name=".MyAIDLService"
+            android:enabled="true"
+            android:exported="true"></service>
         <!-- ipc 예제를 위해 다른 프로세스에서 실행하도록 지정 -->
         <service
             android:name=".MyMessengerIPCService"
             android:enabled="true"
             android:exported="true"
-            android:process=":my_process"/>
+            android:process=":my_process" />
         <service
             android:name=".MyBinderService"
             android:enabled="true"

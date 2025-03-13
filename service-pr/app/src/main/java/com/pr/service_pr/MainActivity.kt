@@ -6,6 +6,7 @@ import android.content.ServiceConnection
 import android.os.Build
 import android.os.Build.VERSION_CODES
 import android.os.Bundle
+import android.os.DeadObjectException
 import android.os.Handler
 import android.os.IBinder
 import android.os.Looper
@@ -76,6 +77,21 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    // aidl 연결체
+    private var aidl: IMyAidlInterface? = null
+    private val aidlConnection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            // stub의 asInterface를 통해 aidl 생성
+            aidl = IMyAidlInterface.Stub.asInterface(p1)
+            showSimpleToast("AIDL service - onServiceConnected")
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            aidl = null
+            showSimpleToast("AIDLService - onServiceDisconnected")
+        }
+
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -130,7 +146,42 @@ class MainActivity : AppCompatActivity() {
         binding.invokeFunctionMessenger.setOnClickListener {
             invokeAddMessengerIPCService()
         }
+
+        // bind aidl
+        binding.bindAidl.setOnClickListener {
+            bindAidlService()
+        }
+        binding.unbindAidl.setOnClickListener {
+            unbindAidlService()
+        }
+        binding.invokeAidl.setOnClickListener {
+            invokeAddInAidlService()
+        }
     }
+
+    private fun invokeAddInAidlService() {
+        try {
+            // aidl을 호출
+            showSimpleToast("1 + 2 = ${aidl?.add(1, 2)}")
+        } catch (e: DeadObjectException) { // 연결이 해제 되어쓸 때
+            showSimpleToast("AIDL connection has broken")
+        } catch (e: SecurityException) { // 서비스와 클라이언트 간 AIDL명세가 올바르게 일치하지 않을 때
+            showSimpleToast("two processes involved in the IPC method call have conflicting AIDL definition!")
+        }
+    }
+
+    private fun unbindAidlService() {
+        unbindService(aidlConnection)
+    }
+
+    private fun bindAidlService() {
+        bindService(
+            Intent(this, MyAIDLService::class.java),
+            aidlConnection,
+            android.app.Service.BIND_AUTO_CREATE
+        )
+    }
+
 
     private fun bindMessengerService() {
         // 서비스 커넥션을 통해 서비스를 bind
