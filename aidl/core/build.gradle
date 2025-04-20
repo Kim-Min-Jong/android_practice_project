@@ -12,12 +12,6 @@ android {
         targetSdk 34
     }
 
-    buildTypes {
-        release {
-            minifyEnabled false
-        }
-    }
-
     buildFeatures {
         aidl true
     }
