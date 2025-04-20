@@ -1,2 +1,0 @@
-rootProject.name = "AIDLMessageApp"
-include ':core', ':view'
