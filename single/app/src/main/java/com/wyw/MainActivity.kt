@@ -14,6 +14,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import com.wyw.ui.theme.WYWTheme
 
 // anjgkwl..
+// 할것 찾아보기..
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
