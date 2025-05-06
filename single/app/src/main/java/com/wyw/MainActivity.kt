@@ -15,6 +15,7 @@ import com.wyw.ui.theme.WYWTheme
 
 // anjgkwl..
 // 할것 찾아보기..
+// 모르겟다..
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
